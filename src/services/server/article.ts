@@ -1,11 +1,9 @@
 import {serverSigninDomain} from "@/services/server/domain";
-import {SPNoteModel} from "@pnnh/polaris-business";
+import {PSArticleModel} from "@/atom/common/models/article";
 
-export async function serverStoreArticle(event: Electron.Event, article: SPNoteModel) {
+export async function serverStoreArticle(event: Electron.Event, article: PSArticleModel) {
     console.log('serverStoreArticle', article)
     const domain = await serverSigninDomain()
-    const putUrl = `/personal/libraries/${article.library}/notebooks/${article.notebook}/notes/${article.urn}`
-    const putResult = await domain.makePut(putUrl, article)
-    console.log('putResult', putResult)
+    await domain.serverStoreArticle(article)
     return 'serverStoreArticle'
 }

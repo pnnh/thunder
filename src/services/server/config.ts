@@ -10,13 +10,9 @@ if (result.error) {
 function parseConfig(): IAppConfig {
     const config = {
         ENV: process.env.NODE_ENV ?? 'development',
-        WORKER_URL: process.env.WORKER_URL ?? ''
     }
     if (!config.ENV) {
         throw new Error('ENV is required')
-    }
-    if (!config.WORKER_URL) {
-        throw new Error('WORKER_URL is required')
     }
 
     return config

@@ -2,9 +2,9 @@ import styles from './page.module.scss'
 import React from 'react'
 import {Toolbar} from './partials/toolbar'
 import {ChannelTable} from './partials/table'
-import {PLSelectResult} from '@pnnh/polaris-business'
 import {clientMakeHttpGet} from '@/services/client/http'
-import {PSChannelModel} from "@pnnh/polaris-business";
+import {PLSelectResult} from "@/atom/common/models/protocol";
+import {PSChannelModel} from "@/atom/common/models/channel";
 
 export default async function Page() {
     const url = '/admin/channels/?' + 'page=1&size=20'

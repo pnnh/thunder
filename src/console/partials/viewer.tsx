@@ -1,24 +1,24 @@
 import React from 'react'
-import {useRecoilState, useRecoilValue} from 'recoil'
 import {ArticleContainer} from "@/components/console/note";
 import './viewer.scss'
 import {noteAtom} from "@/console/providers/notebook";
 import {storeArticleToDatabase} from "@/services/client/personal/notes";
-import {PSNoteModel} from "@pnnh/polaris-business";
+import {PSArticleModel} from "@/atom/common/models/article";
+import {useAtom} from "jotai";
 
 export function ArticleEditorArea() {
-    const [selectedArticle, setSelectedArticle] = useRecoilState(noteAtom)
+    const [selectedArticle, setSelectedArticle] = useAtom(noteAtom)
     if (!selectedArticle || !selectedArticle.current || !selectedArticle.current.body) {
         return <div>Loading</div>
     }
     const article = selectedArticle.current
 
-    const changeArticle = (article: PSNoteModel) => {
+    const changeArticle = (article: PSArticleModel) => {
         setSelectedArticle({
             current: article
         })
         storeArticleToDatabase(article).then(() => {
-            console.log('ArticleStored', article.urn)
+            console.log('ArticleStored', article.uid)
         })
     }
 

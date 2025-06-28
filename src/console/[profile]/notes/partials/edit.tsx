@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import './edit.scss'
-import {NoteModel} from "@pnnh/polaris-business";
+import {PSArticleModel} from "@/atom/common/models/article";
 
-export function MarkdownEditorForm(props: { model: NoteModel, onSubmit?: (model: NoteModel) => void }) {
+export function MarkdownEditorForm(props: { model: PSArticleModel, onSubmit?: (model: PSArticleModel) => void }) {
     const model = props.model
     const onSubmit = props.onSubmit
     const [title, setTitle] = useState<string>(model.title)

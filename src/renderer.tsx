@@ -9,10 +9,9 @@ import {
     Link,
 } from "react-router-dom";
 import {ConsolePage} from "./console/page";
-import {RecoilRoot} from "recoil";
-import {WelcomePage} from "./welcome/welcome";
 import {NewPage} from "@/welcome/new";
 import {OpenPage} from "@/welcome/open";
+import {Provider} from "jotai";
 
 const router = createBrowserRouter([
     {
@@ -43,7 +42,8 @@ if (!rootElement) {
 }
 
 createRoot(rootElement).render(
-    <RecoilRoot>
+
+    <Provider>
         <RouterProvider router={router}/>
-    </RecoilRoot>
+    </Provider>
 );

@@ -1,20 +1,22 @@
 import React from 'react'
 import {useEffect, useState} from 'react'
-import {useRecoilState, useRecoilValue} from 'recoil'
-import {selectLibraries} from '@/services/client/personal/library'
 import './library.scss'
 import {libraryAtom} from "@/console/providers/notebook";
+import {useAtom} from "jotai";
+import {clientSigninDomain} from "@/services/client/domain";
 
 export function LibrarySelector() {
     const [notebookDropdown, setLibraryDropdown] = useState<boolean>(false)
-    const [libraryState, setLibraryState] = useRecoilState(libraryAtom)
+    const [libraryState, setLibraryState] = useAtom(libraryAtom)
+    const domain = clientSigninDomain()
 
     useEffect(() => {
-        selectLibraries().then(selectResult => {
-            if (selectResult && selectResult.range && selectResult.range.length > 0) {
+        clientSigninDomain().then( async domain =>{
+            const selectResult = await domain.selectLibraries()
+            if (selectResult && selectResult.data.range && selectResult.data.range.length > 0) {
                 setLibraryState({
-                    models: selectResult.range,
-                    current: selectResult.range[0]
+                    models: selectResult.data.range,
+                    current: selectResult.data.range[0]
                 })
             }
         })

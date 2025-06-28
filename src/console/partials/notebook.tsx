@@ -1,22 +1,24 @@
 import React from 'react'
 import {useEffect, useState} from 'react'
-import {useRecoilState, useRecoilValue} from 'recoil'
-import {selectNotebooks} from "@/services/client/personal/notebook";
-import {PSNotebookModel} from '@pnnh/polaris-business'
 import {libraryAtom, notebookAtom} from "@/console/providers/notebook";
 import './notebook.scss'
+import {PSNotebookModel} from "@/atom/common/models/personal/notebook";
+import {useAtom, useAtomValue} from "jotai";
+import {clientSigninDomain} from "@/services/client/domain";
 
 export function NotebookList() {
-    const libraryState = useRecoilValue(libraryAtom)
-    const [notebookState, setNotebookState] = useRecoilState(notebookAtom)
+    const libraryState = useAtomValue(libraryAtom)
+    const [notebookState, setNotebookState] = useAtom(notebookAtom)
     useEffect(() => {
         if (!libraryState.current || !libraryState.current.urn) {
             return
         }
-        selectNotebooks(libraryState.current.urn).then(selectResult => {
+        const urn = libraryState.current.urn
+        clientSigninDomain().then(async domain => {
+            const selectResult = await domain.selectNotebooks(urn,'')
             setNotebookState({
-                models: selectResult.range,
-                current: selectResult.range[0]
+                models: selectResult.data.range,
+                current: selectResult.data.range[0]
             })
         })
     }, [libraryState])
@@ -37,7 +39,7 @@ export function NotebookList() {
 }
 
 function NotebookCard({item}: { item: PSNotebookModel }) {
-    const [notebookState, setNotebookState] = useRecoilState(notebookAtom)
+    const [notebookState, setNotebookState] = useAtom(notebookAtom)
     return <div>
         <div className={'directorySelf'} onClick={() => {
             setNotebookState({

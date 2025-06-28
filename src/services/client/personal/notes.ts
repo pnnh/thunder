@@ -1,24 +1,19 @@
-import {PLSelectResult, PSNoteModel} from "@pnnh/polaris-business";
-import {clientSigninDomain} from "@/services/client/domain";
-import {openDatabase} from "@/services/client/database";
 
-export async function selectNotes(libraryUrn: string, notebookUrn: string, queryString: string = '') {
-    const domain = await clientSigninDomain()
-    const url = `/personal/libraries/${libraryUrn}/notebooks/${notebookUrn}/notes?${queryString}`
-    return await domain.makeGet<PLSelectResult<PSNoteModel>>(url)
-}
+import {openDatabase} from "@/services/client/database";
+import {PSArticleModel} from "@/atom/common/models/article";
+
 
 interface DatabaseArticleItem {
-    article: PSNoteModel;
+    article: PSArticleModel;
     timestamp: number;
 }
 
-export async function storeArticleToDatabase(article: PSNoteModel) {
+export async function storeArticleToDatabase(article: PSArticleModel) {
     const db = await openDatabase('articles', 1);
     const tx = db.transaction('keyVal', 'readwrite');
     const store = tx.objectStore('keyVal');
 
-    const dbKey = 'article-' + article.urn;
+    const dbKey = 'article-' + article.uid;
     const nowValue = await store.get(dbKey) as DatabaseArticleItem;
     const nowDate = new Date();
 

@@ -1,9 +1,9 @@
 import {contextBridge, ipcRenderer} from 'electron'
-import {PSNoteModel} from "@pnnh/polaris-business";
+import {PSArticleModel} from "@/atom/common/models/article";
 
 contextBridge.exposeInMainWorld('serverAPI', {
     getAppConfig: () => ipcRenderer.invoke('getAppConfig'),
-    storeArticle: (article: PSNoteModel) => ipcRenderer.invoke('storeArticle', article),
+    storeArticle: (article: PSArticleModel) => ipcRenderer.invoke('storeArticle', article),
 })
 
 window.addEventListener('DOMContentLoaded', () => {

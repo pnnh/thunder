@@ -1,39 +1,44 @@
 import {useEffect, useState} from 'react'
-import {useRecoilValue, useSetRecoilState} from 'recoil'
 import {libraryAtom, noteAtom, notebookAtom} from './providers/notebook'
 import React from 'react'
-import {PSNoteModel, PLSelectResult} from '@pnnh/polaris-business'
-import {selectNotes} from "@/services/client/personal/notes";
 import './notebar.scss'
+import {PLSelectResult} from "@/atom/common/models/protocol";
+import {PSArticleModel} from "@/atom/common/models/article";
+import {useAtom, useAtomValue} from "jotai";
+import {clientSigninDomain} from "@/services/client/domain";
 
 export function ConsoleNotebar() {
-    const [notesResult, setNotesResult] = useState<PLSelectResult<PSNoteModel>>()
-    const libraryState = useRecoilValue(libraryAtom)
-    const notebookState = useRecoilValue(notebookAtom)
+    const [notesResult, setNotesResult] = useState<PLSelectResult<PSArticleModel>>()
+    const libraryState = useAtomValue(libraryAtom)
+    const notebookState = useAtomValue(notebookAtom)
     useEffect(() => {
         if (!libraryState || !libraryState.current || !libraryState.current.urn || !notebookState ||
             !notebookState.current || !notebookState.current.urn) {
             return
         }
-        selectNotes(libraryState.current.urn, notebookState.current.urn).then(selectResult => {
+        const currentUrn = notebookState.current.urn
+        clientSigninDomain().then(async (domain) => {
+            const selectResult = await domain.selectNotes(currentUrn, currentUrn, '')
             setNotesResult(selectResult)
+        })
+        .then(selectResult => {
         })
     }, [notebookState])
 
-    if (!notesResult || !notesResult.range || notesResult.range.length <= 0) {
+    if (!notesResult || !notesResult.data.range || notesResult.data.range.length <= 0) {
         return <div>Empty</div>
     }
     return <div className={'noteList'}>
         {
-            notesResult.range.map(item => {
-                return <NoteCard key={item.urn} item={item}/>
+            notesResult.data.range.map(item => {
+                return <NoteCard key={item.uid} item={item}/>
             })
         }
     </div>
 }
 
-function NoteCard({item}: { item: PSNoteModel }) {
-    const setNote = useSetRecoilState(noteAtom)
+function NoteCard({item}: { item: PSArticleModel }) {
+    const [note, setNote] = useAtom(noteAtom)
 
     return <div className={'noteCard'} onClick={() => {
         setNote({

@@ -1,10 +1,19 @@
-import {IDomain, trySigninDomain} from "@/services/common/domain";
-import {serverConfig} from "@/services/server/config";
 
-export async function serverSigninDomain(): Promise<IDomain> {
-    const domain = await trySigninDomain(serverConfig.WORKER_URL)
-    if (!domain) {
-        throw new Error('domain not found')
+import {PSArticleModel} from "@/atom/common/models/article";
+
+
+export interface IServerDomain {
+    serverStoreArticle(article: PSArticleModel):Promise<void>
+}
+
+class ServerDomain implements IServerDomain {
+    serverStoreArticle(article: PSArticleModel): Promise<void> {
+        throw new Error("Method not implemented.");
     }
-    return domain
+}
+
+export async function serverSigninDomain(): Promise<IServerDomain> {
+    // const domain = await trySigninDomain(serverConfig.WORKER_URL)
+
+    return new ServerDomain()
 }

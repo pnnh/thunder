@@ -1,10 +1,10 @@
 'use client'
 
-import {formatRfc3339} from '@pnnh/atom'
 import './table.scss'
 import React from 'react'
-import {PLSelectResult} from '@pnnh/polaris-business'
-import {PSChannelModel} from "@pnnh/polaris-business";
+import {PLSelectResult} from "@/atom/common/models/protocol";
+import { PSChannelModel } from '@/atom/common/models/channel';
+import {formatRfc3339} from "@/atom/common/utils/datetime";
 
 export function ChannelTable(props: { data: PLSelectResult<PSChannelModel> }) {
     return <div>
