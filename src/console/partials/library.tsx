@@ -8,12 +8,12 @@ import {clientSigninDomain} from "@/services/client/domain";
 export function LibrarySelector() {
     const [notebookDropdown, setLibraryDropdown] = useState<boolean>(false)
     const [libraryState, setLibraryState] = useAtom(libraryAtom)
-    const domain = clientSigninDomain()
 
     useEffect(() => {
         clientSigninDomain().then( async domain =>{
             const selectResult = await domain.selectLibraries()
-            if (selectResult && selectResult.data.range && selectResult.data.range.length > 0) {
+            if (selectResult && selectResult.data
+                 && selectResult.data.range && selectResult.data.range.length > 0) {
                 setLibraryState({
                     models: selectResult.data.range,
                     current: selectResult.data.range[0]
@@ -43,7 +43,7 @@ export function LibrarySelector() {
                 <div className={'libraryList'}>
                     {
                         libraryState.models.map(item => {
-                            return <div key={item.urn} className={'notebookItem'} onClick={() => {
+                            return <div key={item.uid} className={'notebookItem'} onClick={() => {
                                 setLibraryDropdown(!notebookDropdown)
                                 setLibraryState({
                                     models: libraryState.models,

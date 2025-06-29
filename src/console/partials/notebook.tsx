@@ -2,7 +2,7 @@ import React from 'react'
 import {useEffect, useState} from 'react'
 import {libraryAtom, notebookAtom} from "@/console/providers/notebook";
 import './notebook.scss'
-import {PSNotebookModel} from "@/atom/common/models/personal/notebook";
+import {PSNotebookModel} from "@/photon/common/models/personal/notebook";
 import {useAtom, useAtomValue} from "jotai";
 import {clientSigninDomain} from "@/services/client/domain";
 
@@ -10,12 +10,12 @@ export function NotebookList() {
     const libraryState = useAtomValue(libraryAtom)
     const [notebookState, setNotebookState] = useAtom(notebookAtom)
     useEffect(() => {
-        if (!libraryState.current || !libraryState.current.urn) {
+        if (!libraryState.current || !libraryState.current.uid) {
             return
         }
-        const urn = libraryState.current.urn
+        const uid = libraryState.current.uid
         clientSigninDomain().then(async domain => {
-            const selectResult = await domain.selectNotebooks(urn,'')
+            const selectResult = await domain.selectNotebooks(uid,'')
             setNotebookState({
                 models: selectResult.data.range,
                 current: selectResult.data.range[0]
@@ -30,7 +30,7 @@ export function NotebookList() {
         <div className={'notebookList'}>
             {
                 notebookState.models.map(item => {
-                    return <NotebookCard key={item.urn} item={item}/>
+                    return <NotebookCard key={item.uid} item={item}/>
                 })
             }
         </div>
@@ -48,7 +48,7 @@ function NotebookCard({item}: { item: PSNotebookModel }) {
             })
         }}>
             <div className={'directoryName'}>
-                {item.title}</div>
+                {item.name}</div>
         </div>
     </div>
 }

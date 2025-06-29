@@ -3,7 +3,7 @@ import {ArticleContainer} from "@/components/console/note";
 import './viewer.scss'
 import {noteAtom} from "@/console/providers/notebook";
 import {storeArticleToDatabase} from "@/services/client/personal/notes";
-import {PSArticleModel} from "@/atom/common/models/article";
+import {PSArticleModel} from "@/photon/common/models/article";
 import {useAtom} from "jotai";
 
 export function ArticleEditorArea() {

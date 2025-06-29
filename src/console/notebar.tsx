@@ -3,7 +3,7 @@ import {libraryAtom, noteAtom, notebookAtom} from './providers/notebook'
 import React from 'react'
 import './notebar.scss'
 import {PLSelectResult} from "@/atom/common/models/protocol";
-import {PSArticleModel} from "@/atom/common/models/article";
+import {PSArticleModel} from "@/photon/common/models/article";
 import {useAtom, useAtomValue} from "jotai";
 import {clientSigninDomain} from "@/services/client/domain";
 
@@ -12,16 +12,14 @@ export function ConsoleNotebar() {
     const libraryState = useAtomValue(libraryAtom)
     const notebookState = useAtomValue(notebookAtom)
     useEffect(() => {
-        if (!libraryState || !libraryState.current || !libraryState.current.urn || !notebookState ||
-            !notebookState.current || !notebookState.current.urn) {
+        if (!libraryState || !libraryState.current || !libraryState.current.uid || !notebookState ||
+            !notebookState.current || !notebookState.current.uid) {
             return
         }
-        const currentUrn = notebookState.current.urn
+        const currentUrn = notebookState.current.uid
         clientSigninDomain().then(async (domain) => {
             const selectResult = await domain.selectNotes(currentUrn, currentUrn, '')
             setNotesResult(selectResult)
-        })
-        .then(selectResult => {
         })
     }, [notebookState])
 

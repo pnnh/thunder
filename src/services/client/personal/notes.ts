@@ -1,6 +1,6 @@
 
 import {openDatabase} from "@/services/client/database";
-import {PSArticleModel} from "@/atom/common/models/article";
+import {PSArticleModel} from "@/photon/common/models/article";
 
 
 interface DatabaseArticleItem {

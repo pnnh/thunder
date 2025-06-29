@@ -4,6 +4,9 @@ import {PSArticleModel} from "@/atom/common/models/article";
 contextBridge.exposeInMainWorld('serverAPI', {
     getAppConfig: () => ipcRenderer.invoke('getAppConfig'),
     storeArticle: (article: PSArticleModel) => ipcRenderer.invoke('storeArticle', article),
+    selectNotebooks: () => ipcRenderer.invoke('selectNotebooks'),
+    selectLibraries: () => ipcRenderer.invoke('selectLibraries'),
+    selectNotes: () => ipcRenderer.invoke('selectNotes'),
 })
 
 window.addEventListener('DOMContentLoaded', () => {
