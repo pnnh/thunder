@@ -1,5 +1,5 @@
 import {contextBridge, ipcRenderer} from 'electron'
-import {PSArticleModel} from "@/atom/common/models/article";
+import {PSArticleModel} from "@/photon/common/models/article";
 
 contextBridge.exposeInMainWorld('serverAPI', {
     getAppConfig: () => ipcRenderer.invoke('getAppConfig'),
@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('serverAPI', {
     selectNotebooks: () => ipcRenderer.invoke('selectNotebooks'),
     selectLibraries: () => ipcRenderer.invoke('selectLibraries'),
     selectNotes: () => ipcRenderer.invoke('selectNotes'),
+    openExternal: (url: string) => ipcRenderer.invoke('openExternal', url),
 })
 
 window.addEventListener('DOMContentLoaded', () => {

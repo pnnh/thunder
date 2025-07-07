@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, MenuItem} from 'electron';
+import {app, BrowserWindow, ipcMain, Menu, MenuItem} from 'electron';
 import path from 'path';
 import {serverGetAppConfig} from "@/services/server/config";
 import {IpcHandler} from "@/services/server/handler";
@@ -47,8 +47,9 @@ app.on('ready', () => {
     ipcMain.handle('selectNotebooks', ipcHandler.serverSelectNotebooks)
     ipcMain.handle('selectLibraries', ipcHandler.serverSelectLibraries)
     ipcMain.handle('selectNotes', ipcHandler.serverSelectNotes)
-    createWindow()
+    ipcMain.handle('openExternal', ipcHandler.openExternalUrl);
 
+    createWindow()
 });
 
 app.on('window-all-closed', () => {
@@ -63,10 +64,10 @@ app.on('activate', () => {
 
 // 每分钟执行一次文件系统到本地数据库的同步
 if (!app.isPackaged) {
-    initDatabase().then(() =>{
+    initDatabase().then(() => {
         console.log("Database initialized successfully.");
         return runSync();
-    }).then(() =>{
+    }).then(() => {
         console.log("Initial sync completed successfully.");
     });
 

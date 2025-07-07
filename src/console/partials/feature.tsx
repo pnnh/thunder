@@ -1,7 +1,36 @@
 import React from 'react'
 import './feature.scss'
+import {generateUuidV7} from "@/atom/common/utils/basex";
+import {checkLoginStatus} from "@/services/client/account/account";
+import {AccountModel} from "@/atom/common/models/account";
 
 export function ConsoleFeature() {
+    const [accountModel, setAccountModel] = React.useState<AccountModel | null>(null)
+    const openSigninLink = async () => {
+        const appConfig = await window.serverAPI.getAppConfig()
+        const linkId = generateUuidV7()
+        const loginLink = `${appConfig.PUBLIC_POLARIS_URL}/en/account/signin?app=thunder&link=${linkId}`
+        await window.serverAPI.openExternal(loginLink)
+        let retryTimes = 0
+        const inter = setInterval(async () => {
+            retryTimes += 1
+            console.debug('Checking login status, attempt:', retryTimes)
+            if (retryTimes > 180) {
+                clearInterval(inter)
+                return
+            }
+
+            const model = await checkLoginStatus(linkId)
+            if (model) {
+                clearInterval(inter)
+                setAccountModel(model)
+            }
+        }, 1000)
+    }
+    let userImageUrl = "/data/photos/3.webp"
+    if (accountModel) {
+        userImageUrl = accountModel.photoUrl
+    }
     return <div className={'consoleFeature'}>
         <div className={'topArea'}>
             <div className={'featureList'}>
@@ -32,8 +61,10 @@ export function ConsoleFeature() {
         <div className={'bottomArea'}>
             <div className={'accountList'}>
                 <div className={'accountButton'}>
-                    <img src="/data/photos/3.webp" alt='trash'
-                         sizes='28px,28px'/>
+                    <img src={userImageUrl} alt='trash'
+                         sizes='28px,28px' onClick={() => {
+                        openSigninLink().then()
+                    }}/>
                 </div>
             </div>
         </div>

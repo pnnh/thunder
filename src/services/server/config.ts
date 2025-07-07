@@ -13,6 +13,8 @@ function parseConfig(): IAppConfig {
         ENV: process.env.NODE_ENV ?? 'development',
         DATA_PATH: process.env.DATA_PATH ?? './data',
         BLOG_PATH: process.env.BLOG_PATH ?? '',
+        PUBLIC_POLARIS_URL: process.env.PUBLIC_POLARIS_URL ?? '',
+        PUBLIC_PORTAL_URL: process.env.PUBLIC_PORTAL_URL ?? ''
     }
     if (!config.ENV) {
         throw new Error('ENV is required')
@@ -23,6 +25,12 @@ function parseConfig(): IAppConfig {
     }
     if (!config.BLOG_PATH) {
         throw new Error('BLOG_PATH is required')
+    }
+    if (!config.PUBLIC_POLARIS_URL) {
+        throw new Error('PUBLIC_POLARIS_URL is required')
+    }
+    if (!config.PUBLIC_PORTAL_URL) {
+        throw new Error('PUBLIC_PORTAL_URL is required')
     }
 
     return config

@@ -9,8 +9,9 @@ declare global {
             getAppConfig: () => Promise<IAppConfig>
             storeArticle: (article: PSArticleModel) => Promise<void>
             selectNotebooks: (string, string) => Promise<PLSelectResult<PSNotebookModel>>
-            selectLibraries: ()=> Promise<PLSelectResult<PSLibraryModel>>
-            selectNotes: (string, string, string)=> Promise<PLSelectResult<PSArticleModel>>
+            selectLibraries: () => Promise<PLSelectResult<PSLibraryModel>>
+            selectNotes: (string, string, string) => Promise<PLSelectResult<PSArticleModel>>
+            openExternal: (url: string) => Promise<void>
         }
     }
 }

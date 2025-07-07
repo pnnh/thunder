@@ -11,7 +11,7 @@ export function ArticleContainer({tocList, header, body, assetsUrl}: {
     return (
         <ArticleComponent>
             <BuildBodyHtml tocList={tocList} header={header} body={body}
-                           assetsUrl={assetsUrl}/>
+                           assetsUrl={assetsUrl} libUrl={''}/>
         </ArticleComponent>
     )
 }
