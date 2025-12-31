@@ -1,5 +1,5 @@
 import {contextBridge, ipcRenderer} from 'electron'
-import {PSArticleModel} from "@/photon/common/models/article";
+import {PSArticleModel} from "@/services/common/article";
 
 contextBridge.exposeInMainWorld('serverAPI', {
     getAppConfig: () => ipcRenderer.invoke('getAppConfig'),

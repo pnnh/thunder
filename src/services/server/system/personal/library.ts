@@ -2,10 +2,10 @@
 import fs from "node:fs";
 import frontMatter from "front-matter";
 import path from "path";
-import {CodeOk, PLSelectResult} from "@/atom/common/models/protocol";
-import {PSLibraryModel} from "@/photon/common/models/personal/library";
-import {resolvePath} from "@/atom/server/filesystem/path";
-import {uuidV7} from "@/atom/common/utils/uuid";
+import {CodeOk, PLSelectResult} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom";
+import {uuidV7} from "@pnnh/atom";
+import {PSLibraryModel} from "@/services/common/library";
 
 export class SystemLibraryService {
     systemDomain: string
@@ -29,7 +29,14 @@ export class SystemLibraryService {
                     name: libraryName,
                     description: '',
                     owner: '',
-                    file_path: ""
+                    file_path: "",
+                    title: '',
+                    creator: '',
+                    image: '',
+                    profile: '',
+                    lang: '',
+                    match: '',
+                    header: ''
                 }
                 const metadataFile = path.join(basePath, file, 'metadata.md')
                 if (fs.existsSync(metadataFile)) {

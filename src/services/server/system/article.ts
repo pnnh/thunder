@@ -1,18 +1,17 @@
 import ignore from 'ignore'
-import {decodeBase64String,} from "@/atom/common/utils/basex";
-import {PSArticleFileModel, PSArticleMetadataModel} from "@/photon/common/models/article";
-import {CodeNotFound, CodeOk, PLGetResult, PLSelectResult} from "@/atom/common/models/protocol";
-import {getMimeType} from "@/atom/common/utils/mime";
+import {decodeBase64String,} from "@pnnh/atom";
+import {CodeNotFound, CodeOk, PLGetResult, PLSelectResult} from "@pnnh/atom";
+import {getMimeType} from "@pnnh/atom";
 import path from "path";
 import fs from "node:fs";
-import {PSArticleModel} from "@/photon/common/models/article";
-import {encodeBase64String} from "@/atom/common/utils/basex";
+import {encodeBase64String} from "@pnnh/atom";
 import frontMatter from "front-matter";
-import {isValidUUID, uuidV4} from "@/atom/common/utils/uuid";
-import {resolvePath} from "@/atom/server/filesystem/path";
+import {isValidUUID, uuidV4} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom";
 import {bulkInsertOrUpdateArticles} from "@/services/server/system/database";
 import {openMainDatabase} from "@/services/server/database/database";
-import {createPaginationByPage} from "@/atom/common/utils/pagination";
+import {createPaginationByPage} from "@pnnh/atom";
+import {PSArticleFileModel, PSArticleMetadataModel, PSArticleModel} from "@/services/common/article";
 
 const assetsIgnore = ignore().add(['.*', 'node_modules', 'dist', 'build', 'out', 'target', 'logs', 'logs/*', 'logs/**/*'])
 
@@ -80,7 +79,9 @@ export class SystemArticleService {
             owner: '',
             channel: channelUrn,
             partition: '',
-            path: ''
+            path: '',
+            coverUrl:'', lang:'', channel_name:'', name:'',
+            url:'', repo_url:'', full_repo_url:'', full_repo_path:''
         }
 
         await fillNoteMetadata(articleFullPath, model)
@@ -237,7 +238,8 @@ export class SystemArticleService {
                     is_dir: stat.isDirectory(),
                     is_text: false,
                     is_image: false,
-                    storage_path: modelPath
+                    storage_path: modelPath,
+                    full_repo_path:''
                 } as PSArticleFileModel
             })
         return resultFiles

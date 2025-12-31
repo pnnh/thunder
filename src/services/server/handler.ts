@@ -1,6 +1,6 @@
 import {serverSigninDomain} from "@/services/server/domain";
-import {PSArticleModel} from "@/photon/common/models/article";
 import {shell} from 'electron';
+import {PSArticleModel} from "@/services/common/article";
 
 export class IpcHandler {
 

@@ -1,7 +1,7 @@
 import {IAppConfig} from "@/services/common/config";
-import {PSArticleModel} from "@/atom/common/models/article";
-import {PLSelectResult} from "@/atom/common/models/protocol";
-import {PSNotebookModel} from "@/atom/common/models/personal/notebook";
+import {PSArticleModel} from "@/services/common/article";
+import {PLSelectResult} from "@/services/common/protocol";
+import {PSNotebookModel} from "@/services/common/notebook";
 
 declare global {
     interface Window {

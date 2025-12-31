@@ -1,8 +1,8 @@
 
 import {Database} from "sqlite";
-import {PSArticleModel} from "@/photon/common/models/article";
-import {encodeBase64String} from "@/atom/common/utils/basex";
+import {encodeBase64String} from "@pnnh/atom";
 import {openMainDatabase} from "@/services/server/database/database";
+import {PSArticleModel} from "@/services/common/article";
 
 export async function bulkInsertOrUpdateArticles(articles: PSArticleModel[]) {
     const db = await openMainDatabase()

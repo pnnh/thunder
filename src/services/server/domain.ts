@@ -1,9 +1,10 @@
 
-import {PSArticleModel} from "@/photon/common/models/article";
-import {PSNotebookModel} from "@/photon/common/models/personal/notebook";
-import {PSLibraryModel} from "@/photon/common/models/personal/library";
-import {CodeOk, PLSelectResult} from "@/atom/common/models/protocol";
+
+import {CodeOk, PLSelectResult} from "@pnnh/atom";
 import {selectNotebooksFromDatabase} from "@/services/server/database/notebook";
+import {PSArticleModel} from "@/services/common/article";
+import {PSLibraryModel} from "@/services/common/library";
+import {PSNotebookModel} from "@/services/common/notebook";
 
 class ServerDomain {
     serverSelectNotes(): Promise<PLSelectResult<PSArticleModel>> {
@@ -23,7 +24,15 @@ class ServerDomain {
                 channel: "",
                 partition: "",
                 path: "",
-                uid: ""
+                uid: "",
+                lang: '',
+                channel_name: '',
+                name: '',
+                url: '',
+                repo_url: '',
+                full_repo_url: '',
+                full_repo_path: '',
+                coverUrl:''
             }
         ]
         const result: PLSelectResult<PSArticleModel> = {
@@ -46,7 +55,14 @@ class ServerDomain {
             create_time: "",
             update_time: "",
             owner: "",
-            file_path: ''
+            file_path: '',
+            title: '',
+            creator: '',
+            header: '',
+            image: '',
+            lang: '',
+            match: '',
+            profile: ''
         }
 
         if (process.platform === 'win32') {

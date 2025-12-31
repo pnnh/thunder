@@ -8,32 +8,14 @@ import {
     Route,
     Link,
 } from "react-router-dom";
-import {ConsolePage} from "./console/page";
-import {NewPage} from "@/welcome/new";
-import {OpenPage} from "@/welcome/open";
 import {Provider} from "jotai";
+import {WelcomePage} from "@/welcome/welcome";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: (<ConsolePage/>),
+        element: <WelcomePage/>,
     },
-    {
-        path: "/new",
-        element: <NewPage/>,
-    },
-    {
-        path: "/open",
-        element: <OpenPage/>,
-    },
-    {
-        path: "/about",
-        element: <div>About</div>,
-    },
-    {
-        path: "/console",
-        element: <ConsolePage/>,
-    }
 ]);
 
 const rootElement = document.getElementById("root")

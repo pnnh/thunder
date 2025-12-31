@@ -1,7 +1,7 @@
-import {CodeNotFound, CodeOk, PLGetResult, PLSelectResult} from "@/atom/common/models/protocol";
+import {CodeNotFound, CodeOk, PLGetResult, PLSelectResult} from "@pnnh/atom";
 import {openMainDatabase} from "@/services/server/database/database";
-import {createPaginationByPage} from "@/atom/common/utils/pagination";
-import {PSNotebookModel} from "@/photon/common/models/personal/notebook";
+import {createPaginationByPage} from "@pnnh/atom";
+import {PSNotebookModel} from "@/services/common/notebook";
 
 async function findNotebookFromDatabase(uid: string): Promise<PLGetResult<PSNotebookModel | undefined>> {
     const db = await openMainDatabase()

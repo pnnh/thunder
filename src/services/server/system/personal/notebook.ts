@@ -2,11 +2,11 @@
 import fs from "node:fs";
 import frontMatter from "front-matter";
 import path from "path";
-import {CodeOk, emptySelectResult, PLSelectResult} from "@/atom/common/models/protocol";
-import {PSNotebookModel} from "@/photon/common/models/personal/notebook";
-import {decodeBase64String, encodeBase64String} from "@/atom/common/utils/basex";
-import {resolvePath} from "@/atom/server/filesystem/path";
-import {uuidV7} from "@/atom/common/utils/uuid";
+import {CodeOk, emptySelectResult, PLSelectResult} from "@pnnh/atom";
+import {decodeBase64String, encodeBase64String} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom";
+import {uuidV7} from "@pnnh/atom";
+import {PSNotebookModel} from "@/services/common/notebook";
 
 export class SystemNotebookService {
     systemDomain: string

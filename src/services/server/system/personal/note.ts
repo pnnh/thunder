@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "path";
-import {CodeOk, emptySelectResult, PLSelectResult} from "@/atom/common/models/protocol";
-import {decodeBase64String, encodeBase64String} from "@/atom/common/utils/basex";
-import {resolvePath} from "@/atom/server/filesystem/path";
-import {PSArticleModel} from "@/photon/common/models/article";
+import {CodeOk, emptySelectResult, PLSelectResult} from "@pnnh/atom";
+import {decodeBase64String, encodeBase64String} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom";
 import {fillNoteMetadata} from "@/services/server/system/article";
-import {uuidV7} from "@/atom/common/utils/uuid";
+import {uuidV7} from "@pnnh/atom";
+import {PSArticleModel} from "@/services/common/article";
 
 export class SystemNoteService {
     systemDomain: string
@@ -45,7 +45,15 @@ export class SystemNoteService {
                     create_time: "", update_time: "",
                     uid: noteUniqueName,
                     description: '',
-                    owner: ''
+                    owner: '',
+                    lang: '',
+                    channel_name: '',
+                    name: '',
+                    url: '',
+                    repo_url: '',
+                    full_repo_url: '',
+                    full_repo_path: '',
+                    coverUrl:''
                 }
                 let noteDirectoryFullPath = path.join(basePath, libraryFileName, notebookFileName, file)
                 await fillNoteMetadata(noteDirectoryFullPath, model)

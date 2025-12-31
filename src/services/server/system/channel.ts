@@ -1,15 +1,13 @@
 import fs from "fs";
 import path from "path";
-import {PSChannelMetadataModel, PSChannelModel} from "@/photon/common/models/channel";
-import {decodeBase64String, encodeBase64String} from "@/atom/common/utils/basex";
-import {getMimeType} from "@/atom/common/utils/mime";
-import {CodeNotFound, CodeOk, PLGetResult, PLSelectResult} from "@/atom/common/models/protocol";
-import {isValidUUID, uuidV4} from "@/atom/common/utils/uuid";
-import {resolvePath} from "@/atom/server/filesystem/path";
+import {decodeBase64String, encodeBase64String} from "@pnnh/atom";
+import {getMimeType} from "@pnnh/atom";
+import {isValidUUID, uuidV4} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom";
 import frontMatter from "front-matter";
 import {SystemArticleService} from "@/services/server/system/article";
 import {openMainDatabase} from "@/services/server/database/database";
-import {createPaginationByPage} from "@/atom/common/utils/pagination";
+import {PSChannelMetadataModel, PSChannelModel} from "@/services/common/channel";
 
 export class SystemChannelService {
     systemDomain: string
@@ -17,7 +15,6 @@ export class SystemChannelService {
     constructor(systemDomain: string) {
         this.systemDomain = resolvePath(systemDomain)
     }
-
 
     async #parseChannelInfo(channelFullPath: string): Promise<PSChannelModel | undefined> {
         const stat = fs.statSync(channelFullPath)
@@ -30,7 +27,11 @@ export class SystemChannelService {
             image: '',
             name: path.basename(channelFullPath, extName),
             description: '',
-            uid: ''
+            uid: '',
+            lang: '',
+            match: '',
+            owner: '',
+            title:''
         }
 
         // 从metadata.md中解析元数据
