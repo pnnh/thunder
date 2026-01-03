@@ -7,7 +7,7 @@ import fs from "node:fs";
 import {encodeBase64String} from "@pnnh/atom";
 import frontMatter from "front-matter";
 import {isValidUUID, uuidV4} from "@pnnh/atom";
-import {resolvePath} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom/nodejs";
 import {bulkInsertOrUpdateArticles} from "@/services/server/system/database";
 import {openMainDatabase} from "@/services/server/database/database";
 import {createPaginationByPage} from "@pnnh/atom";

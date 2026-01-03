@@ -1,7 +1,7 @@
 // 解析配置信息
 import dotenv from "dotenv";
 import {IAppConfig} from "../common/config";
-import {resolvePath} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom/nodejs";
 
 const result = dotenv.config({path: `.env.${process.env.NODE_ENV ?? 'development'}`})
 if (result.error) {

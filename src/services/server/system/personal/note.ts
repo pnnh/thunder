@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "path";
 import {CodeOk, emptySelectResult, PLSelectResult} from "@pnnh/atom";
 import {decodeBase64String, encodeBase64String} from "@pnnh/atom";
-import {resolvePath} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom/nodejs";
 import {fillNoteMetadata} from "@/services/server/system/article";
 import {uuidV7} from "@pnnh/atom";
 import {PSArticleModel} from "@/services/common/article";

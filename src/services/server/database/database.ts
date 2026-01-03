@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3'
 import {Database, open} from 'sqlite'
 import {serverGetAppConfig} from "@/services/server/config";
-import {ensureDirectoryExistence} from "@pnnh/atom";
+import {ensureDirectoryExistence} from "@pnnh/atom/nodejs";
 
 const databaseMap: Map<string, Database<sqlite3.Database>> = new Map()
 

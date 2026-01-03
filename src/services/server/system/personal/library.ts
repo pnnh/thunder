@@ -3,7 +3,7 @@ import fs from "node:fs";
 import frontMatter from "front-matter";
 import path from "path";
 import {CodeOk, PLSelectResult} from "@pnnh/atom";
-import {resolvePath} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom/nodejs";
 import {uuidV7} from "@pnnh/atom";
 import {PSLibraryModel} from "@/services/common/library";
 

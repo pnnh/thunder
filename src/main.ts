@@ -100,16 +100,16 @@ app.on('activate', () => {
 });
 
 // 每分钟执行一次文件系统到本地数据库的同步
-if (!app.isPackaged) {
-    initDatabase().then(() => {
-        console.log("Database initialized successfully.");
-        return runSync();
-    }).then(() => {
-        console.log("Initial sync completed successfully.");
-    });
-
-}
-cron.schedule("* * * * *", async () => {
-    console.log("running a task every minute");
-    await runSync();
-});
+// if (!app.isPackaged) {
+//     initDatabase().then(() => {
+//         console.log("Database initialized successfully.");
+//         return runSync();
+//     }).then(() => {
+//         console.log("Initial sync completed successfully.");
+//     });
+//
+// }
+// cron.schedule("* * * * *", async () => {
+//     console.log("running a task every minute");
+//     await runSync();
+// });

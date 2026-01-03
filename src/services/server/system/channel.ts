@@ -3,7 +3,7 @@ import path from "path";
 import {decodeBase64String, encodeBase64String} from "@pnnh/atom";
 import {getMimeType} from "@pnnh/atom";
 import {isValidUUID, uuidV4} from "@pnnh/atom";
-import {resolvePath} from "@pnnh/atom";
+import {resolvePath} from "@pnnh/atom/nodejs";
 import frontMatter from "front-matter";
 import {SystemArticleService} from "@/services/server/system/article";
 import {openMainDatabase} from "@/services/server/database/database";
