@@ -85,6 +85,7 @@ app.on('ready', () => {
     ipcMain.handle('selectLibraries', ipcHandler.serverSelectLibraries)
     ipcMain.handle('selectNotes', ipcHandler.serverSelectNotes)
     ipcMain.handle('openExternal', ipcHandler.openExternalUrl);
+    ipcMain.handle('openFolder', ipcHandler.openFolder);
 
     createWindow()
 });

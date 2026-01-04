@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('serverAPI', {
     selectLibraries: () => ipcRenderer.invoke('selectLibraries'),
     selectNotes: () => ipcRenderer.invoke('selectNotes'),
     openExternal: (url: string) => ipcRenderer.invoke('openExternal', url),
+    openFolder: () => ipcRenderer.invoke('openFolder'),
 })
 
 window.addEventListener('DOMContentLoaded', () => {
