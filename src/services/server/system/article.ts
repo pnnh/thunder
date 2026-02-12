@@ -1,21 +1,26 @@
 import ignore from 'ignore'
-import {decodeBase64String,} from "@pnnh/atom";
-import {CodeNotFound, CodeOk, PLGetResult, PLSelectResult} from "@pnnh/atom";
-import {getMimeType} from "@pnnh/atom";
+import {
+    CodeNotFound,
+    CodeOk,
+    createPaginationByPage,
+    decodeBase64String,
+    encodeBase64String,
+    getMimeType,
+    isValidUUID,
+    PLGetResult,
+    PLSelectResult,
+} from "@pnnh/atom";
 import path from "path";
 import fs from "node:fs";
-import {encodeBase64String} from "@pnnh/atom";
 import frontMatter from "front-matter";
-import {isValidUUID, uuidV4} from "@pnnh/atom";
 import {resolvePath} from "@pnnh/atom/nodejs";
 import {bulkInsertOrUpdateArticles} from "@/services/server/system/database";
 import {openMainDatabase} from "@/services/server/database/database";
-import {createPaginationByPage} from "@pnnh/atom";
-import {PSArticleFileModel, PSArticleMetadataModel, PSArticleModel} from "@/services/common/article";
+import {PSNoteFileModel, PSNoteMetadataModel, PSNoteModel} from "@/services/common/note";
 
 const assetsIgnore = ignore().add(['.*', 'node_modules', 'dist', 'build', 'out', 'target', 'logs', 'logs/*', 'logs/**/*'])
 
-export async function fillNoteMetadata(noteDirectoryFullPath: string, model: PSArticleModel) {
+export async function fillNoteMetadata(noteDirectoryFullPath: string, model: PSNoteModel) {
     let contentFile = path.join(noteDirectoryFullPath, 'index.md')
     let contentText: string | undefined
     if (fs.existsSync(contentFile)) {
@@ -34,7 +39,7 @@ export async function fillNoteMetadata(noteDirectoryFullPath: string, model: PSA
     model.update_time = statIndex.mtime.toISOString()
     const matter = frontMatter(contentText)
     model.body = matter.body
-    const metadata = matter.attributes as PSArticleMetadataModel
+    const metadata = matter.attributes as PSNoteMetadataModel
 
     const noteUid = metadata.uid
     if (noteUid) {
@@ -55,45 +60,15 @@ export async function fillNoteMetadata(noteDirectoryFullPath: string, model: PSA
     }
 }
 
-export class SystemArticleService {
+export class SystemNoteService {
     systemDomain: string
 
     constructor(systemDomain: string) {
         this.systemDomain = resolvePath(systemDomain)
     }
 
-    async #parseArticleInfo(channelUrn: string, articleFullPath: string): Promise<PSArticleModel | undefined> {
-        const extName = path.extname(articleFullPath)
-        const noteName = path.basename(articleFullPath, extName)
-
-        const model: PSArticleModel = {
-            uid: '', discover: 0,
-            create_time: "", creator: "",
-            update_time: "",
-            description: '',
-            title: noteName,
-            header: 'markdown',
-            body: '',
-            keywords: '',
-            cover: '',
-            owner: '',
-            channel: channelUrn,
-            partition: '',
-            path: '',
-            coverUrl:'', lang:'', channel_name:'', name:'',
-            url:'', repo_url:'', full_repo_url:'', full_repo_path:''
-        }
-
-        await fillNoteMetadata(articleFullPath, model)
-
-        if (!model.uid || !model.title) {
-            return undefined
-        }
-        return model
-    }
-
     async syncArticlesInChannel(channelUrn: string, channelFullPath: string) {
-        const articles: PSArticleModel[] = []
+        const articles: PSNoteModel[] = []
         const files = fs.readdirSync(channelFullPath)
         for (const file of files) {
 
@@ -112,7 +87,7 @@ export class SystemArticleService {
     }
 
     async selectArticlesFromDatabase(page: number, size: number, sort: string, keyword: string,
-                                     filter: string, channel: string): Promise<PLSelectResult<PSArticleModel>> {
+                                     filter: string, channel: string): Promise<PLSelectResult<PSNoteModel>> {
 
         const db = await openMainDatabase();
         const {limit, offset} = createPaginationByPage(page, size);
@@ -145,7 +120,7 @@ export class SystemArticleService {
         selectSql += ` ORDER BY ${sort === 'latest' ? 'update_time' : 'discover'} DESC LIMIT :limit OFFSET :offset`;
         selectParams[":limit"] = limit;
         selectParams[":offset"] = offset;
-        const result = await db.all<PSArticleModel[]>(
+        const result = await db.all<PSNoteModel[]>(
             selectSql, selectParams,
         );
         return {
@@ -176,9 +151,9 @@ export class SystemArticleService {
         return undefined
     }
 
-    async findArticleFromDatabase(uid: string): Promise<PLGetResult<PSArticleModel | undefined>> {
+    async findArticleFromDatabase(uid: string): Promise<PLGetResult<PSNoteModel | undefined>> {
         const db = await openMainDatabase()
-        const result = await db.all<PSArticleModel[]>(
+        const result = await db.all<PSNoteModel[]>(
             `select * from notes where uid = :uid limit 1`, {
                 ':uid': uid,
             })
@@ -196,7 +171,7 @@ export class SystemArticleService {
         }
     }
 
-    async selectFiles(channelUrn: string, articleUrn: string, parentUrn: string): Promise<PLSelectResult<PSArticleFileModel>> {
+    async selectFiles(channelUrn: string, articleUrn: string, parentUrn: string): Promise<PLSelectResult<PSNoteFileModel>> {
 
         const files = this.#scanFiles(channelUrn, articleUrn, parentUrn)
         return {
@@ -211,7 +186,54 @@ export class SystemArticleService {
         }
     }
 
-    #scanFiles(channelUrn: string, articleUrn: string, parentUrn: string): PSArticleFileModel[] {
+    readAssets(channelUrn: string, articleUrn: string, assetsUrn: string) {
+        const channelPath = decodeBase64String(channelUrn)
+        const articlePath = decodeBase64String(articleUrn)
+        const assetsPath = decodeBase64String(assetsUrn)
+        const fullPath = path.join(this.systemDomain, channelPath, articlePath, assetsPath)
+
+        const stat = fs.statSync(fullPath)
+        if (stat && stat.isFile() && stat.size < 4096000) {
+            const mimeType = getMimeType(assetsPath)
+            return {
+                mime: mimeType,
+                buffer: fs.readFileSync(fullPath)
+            }
+        }
+        return undefined
+    }
+
+    async #parseArticleInfo(channelUrn: string, articleFullPath: string): Promise<PSNoteModel | undefined> {
+        const extName = path.extname(articleFullPath)
+        const noteName = path.basename(articleFullPath, extName)
+
+        const model: PSNoteModel = {
+            uid: '', discover: 0,
+            create_time: "", creator: "",
+            update_time: "",
+            description: '',
+            title: noteName,
+            header: 'markdown',
+            body: '',
+            keywords: '',
+            cover: '',
+            owner: '',
+            channel: channelUrn,
+            partition: '',
+            path: '',
+            coverUrl: '', lang: '', channel_name: '', name: '',
+            url: '', repo_url: '', full_repo_url: '', full_repo_path: ''
+        }
+
+        await fillNoteMetadata(articleFullPath, model)
+
+        if (!model.uid || !model.title) {
+            return undefined
+        }
+        return model
+    }
+
+    #scanFiles(channelUrn: string, articleUrn: string, parentUrn: string): PSNoteFileModel[] {
         const channelPath = decodeBase64String(channelUrn)
         const articlePath = decodeBase64String(articleUrn)
         const parentPath = parentUrn ? decodeBase64String(parentUrn) : ''
@@ -239,26 +261,9 @@ export class SystemArticleService {
                     is_text: false,
                     is_image: false,
                     storage_path: modelPath,
-                    full_repo_path:''
-                } as PSArticleFileModel
+                    full_repo_path: ''
+                } as PSNoteFileModel
             })
         return resultFiles
-    }
-
-    readAssets(channelUrn: string, articleUrn: string, assetsUrn: string) {
-        const channelPath = decodeBase64String(channelUrn)
-        const articlePath = decodeBase64String(articleUrn)
-        const assetsPath = decodeBase64String(assetsUrn)
-        const fullPath = path.join(this.systemDomain, channelPath, articlePath, assetsPath)
-
-        const stat = fs.statSync(fullPath)
-        if (stat && stat.isFile() && stat.size < 4096000) {
-            const mimeType = getMimeType(assetsPath)
-            return {
-                mime: mimeType,
-                buffer: fs.readFileSync(fullPath)
-            }
-        }
-        return undefined
     }
 }

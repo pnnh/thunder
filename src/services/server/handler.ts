@@ -1,12 +1,10 @@
 import {serverSigninDomain} from "@/services/server/domain";
-import {shell} from 'electron';
-import {PSArticleModel} from "@/services/common/article";
-
-import {dialog} from 'electron';
+import {dialog, shell} from 'electron';
+import {PSNoteModel} from "@/services/common/note";
 
 export class IpcHandler {
 
-    async serverStoreArticle(event: Electron.Event, article: PSArticleModel) {
+    async serverStoreArticle(event: Electron.Event, article: PSNoteModel) {
         console.log('serverStoreArticle', article)
         const domain = await serverSigninDomain()
         await domain.serverStoreArticle(article)
@@ -19,16 +17,22 @@ export class IpcHandler {
         return await domain.serverSelectNotebooks()
     }
 
+    async serverGetNote(event: Electron.Event) {
+
+        const domain = await serverSigninDomain()
+        return await domain.getNote()
+    }
+
     async serverSelectLibraries(event: Electron.Event) {
         console.log('serverSelectLibraries')
         const domain = await serverSigninDomain()
         return await domain.serverSelectLibraries()
     }
 
-    async serverSelectNotes(event: Electron.Event) {
+    async serverSelectNotes(event: Electron.Event, bookUrn: string) {
         console.log('serverSelectNotes')
         const domain = await serverSigninDomain()
-        return await domain.serverSelectNotes()
+        return await domain.serverSelectNotes(bookUrn)
     }
 
     async openExternalUrl(event: Electron.Event, url: string) {

@@ -1,10 +1,9 @@
-
 import {Database} from "sqlite";
 import {encodeBase64String} from "@pnnh/atom";
 import {openMainDatabase} from "@/services/server/database/database";
-import {PSArticleModel} from "@/services/common/article";
+import {PSNoteModel} from "@/services/common/article";
 
-export async function bulkInsertOrUpdateArticles(articles: PSArticleModel[]) {
+export async function bulkInsertOrUpdateArticles(articles: PSNoteModel[]) {
     const db = await openMainDatabase()
     await db.exec('BEGIN TRANSACTION;')
     const stmt = await db.prepare(`INSERT 

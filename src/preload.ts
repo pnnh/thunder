@@ -1,12 +1,13 @@
 import {contextBridge, ipcRenderer} from 'electron'
-import {PSArticleModel} from "@/services/common/article";
+import {PSNoteModel} from "@/services/common/note";
 
 contextBridge.exposeInMainWorld('serverAPI', {
     getAppConfig: () => ipcRenderer.invoke('getAppConfig'),
-    storeArticle: (article: PSArticleModel) => ipcRenderer.invoke('storeArticle', article),
+    storeArticle: (article: PSNoteModel) => ipcRenderer.invoke('storeArticle', article),
     selectNotebooks: () => ipcRenderer.invoke('selectNotebooks'),
     selectLibraries: () => ipcRenderer.invoke('selectLibraries'),
     selectNotes: () => ipcRenderer.invoke('selectNotes'),
+    getNote: () => ipcRenderer.invoke('getNote'),
     openExternal: (url: string) => ipcRenderer.invoke('openExternal', url),
     openFolder: () => ipcRenderer.invoke('openFolder'),
 })

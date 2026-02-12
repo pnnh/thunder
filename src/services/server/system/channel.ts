@@ -1,37 +1,53 @@
 import fs from "fs";
 import path from "path";
-import {decodeBase64String, encodeBase64String} from "@pnnh/atom";
-import {getMimeType} from "@pnnh/atom";
-import {isValidUUID, uuidV4} from "@pnnh/atom";
+import {decodeBase64String, getMimeType, isValidUUID} from "@pnnh/atom";
 import {resolvePath} from "@pnnh/atom/nodejs";
 import frontMatter from "front-matter";
-import {SystemArticleService} from "@/services/server/system/article";
+import {SystemNoteService} from "@/services/server/system/article";
 import {openMainDatabase} from "@/services/server/database/database";
-import {PSChannelMetadataModel, PSChannelModel} from "@/services/common/channel";
+import {PSNotebookMetadataModel, PSNotebookModel} from "@/services/common/notebook";
 
-export class SystemChannelService {
+export class SystemNotebookService {
     systemDomain: string
 
     constructor(systemDomain: string) {
         this.systemDomain = resolvePath(systemDomain)
     }
 
-    async #parseChannelInfo(channelFullPath: string): Promise<PSChannelModel | undefined> {
+    async runSync() {
+        const channels = await this.#scanChannels()
+        await this.#bulkInsertOrUpdateArticles(channels)
+    }
+
+    async readAssets(channelUrn: string, fileUrn: string) {
+        const channelPath = decodeBase64String(channelUrn)
+        const assetsPath = decodeBase64String(fileUrn)
+        const fullPath = path.join(this.systemDomain, channelPath, assetsPath)
+
+        const stat = fs.statSync(fullPath)
+        if (stat && stat.isFile() && stat.size < 4096000) {
+            const mimeType = getMimeType(assetsPath)
+            return {
+                mime: mimeType,
+                buffer: fs.readFileSync(fullPath)
+            }
+        }
+        return undefined
+    }
+
+    async #parseChannelInfo(channelFullPath: string): Promise<PSNotebookModel | undefined> {
         const stat = fs.statSync(channelFullPath)
         const extName = path.extname(channelFullPath)
         if (!stat.isDirectory() || (extName !== '.chan' && extName !== '.channel')) {
             return undefined
         }
-        const model: PSChannelModel = {
-            create_time: "", creator: "", profile: "", update_time: "",
+        const model: PSNotebookModel = {
+            create_time: "", profile: "", update_time: "",
             image: '',
             name: path.basename(channelFullPath, extName),
             description: '',
             uid: '',
-            lang: '',
-            match: '',
-            owner: '',
-            title:''
+            owner: ''
         }
 
         // 从metadata.md中解析元数据
@@ -49,7 +65,7 @@ export class SystemChannelService {
             return undefined
         }
         const matter = frontMatter(contentText)
-        const metadata = matter.attributes as PSChannelMetadataModel
+        const metadata = matter.attributes as PSNotebookMetadataModel
         if (metadata) {
             const noteUid = metadata.uid
             if (noteUid) {
@@ -76,9 +92,9 @@ export class SystemChannelService {
 
     async #scanChannels() {
         const basePath = this.systemDomain
-        const channels: PSChannelModel[] = []
+        const channels: PSNotebookModel[] = []
         const files = fs.readdirSync(basePath)
-        const articleService = new SystemArticleService(this.systemDomain)
+        const articleService = new SystemNoteService(this.systemDomain)
         for (const file of files) {
             const fullPath = path.join(basePath, file)
             const model = await this.#parseChannelInfo(fullPath)
@@ -90,12 +106,7 @@ export class SystemChannelService {
         return channels
     }
 
-    async runSync() {
-        const channels = await this.#scanChannels()
-        await this.#bulkInsertOrUpdateArticles(channels)
-    }
-
-    async #bulkInsertOrUpdateArticles(channelModels: PSChannelModel[]) {
+    async #bulkInsertOrUpdateArticles(channelModels: PSNotebookModel[]) {
         const db = await openMainDatabase()
         await db.exec('BEGIN TRANSACTION;')
         const stmt = await db.prepare(`INSERT 
@@ -120,22 +131,5 @@ export class SystemChannelService {
         }
         await stmt.finalize()
         await db.exec('COMMIT;')
-    }
-
-
-    async readAssets(channelUrn: string, fileUrn: string) {
-        const channelPath = decodeBase64String(channelUrn)
-        const assetsPath = decodeBase64String(fileUrn)
-        const fullPath = path.join(this.systemDomain, channelPath, assetsPath)
-
-        const stat = fs.statSync(fullPath)
-        if (stat && stat.isFile() && stat.size < 4096000) {
-            const mimeType = getMimeType(assetsPath)
-            return {
-                mime: mimeType,
-                buffer: fs.readFileSync(fullPath)
-            }
-        }
-        return undefined
     }
 }

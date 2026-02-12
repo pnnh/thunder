@@ -1,14 +1,13 @@
-
 import {openDatabase} from "@/services/client/database";
-import {PSArticleModel} from "@/services/common/article";
+import {PSNoteModel} from "@/services/common/note";
 
 
 interface DatabaseArticleItem {
-    article: PSArticleModel;
+    article: PSNoteModel;
     timestamp: number;
 }
 
-export async function storeArticleToDatabase(article: PSArticleModel) {
+export async function storeArticleToDatabase(article: PSNoteModel) {
     const db = await openDatabase('articles', 1);
     const tx = db.transaction('keyVal', 'readwrite');
     const store = tx.objectStore('keyVal');

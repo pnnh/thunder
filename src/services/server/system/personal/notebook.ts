@@ -1,11 +1,8 @@
-
 import fs from "node:fs";
 import frontMatter from "front-matter";
 import path from "path";
-import {CodeOk, emptySelectResult, PLSelectResult} from "@pnnh/atom";
-import {decodeBase64String, encodeBase64String} from "@pnnh/atom";
+import {CodeOk, decodeBase64String, emptySelectResult, PLSelectResult, uuidV7} from "@pnnh/atom";
 import {resolvePath} from "@pnnh/atom/nodejs";
-import {uuidV7} from "@pnnh/atom";
 import {PSNotebookModel} from "@/services/common/notebook";
 
 export class SystemNotebookService {
@@ -29,12 +26,13 @@ export class SystemNotebookService {
                 const notebookName = path.basename(file, path.extname(file))
                 const notebookUniqueName = uuidV7()//encodeMD5Format(file)
                 const model: PSNotebookModel = {
-                    image: "",  profile: "",
+                    image: "", profile: "",
                     create_time: "", update_time: "",
                     uid: notebookUniqueName,
                     name: notebookName,
                     description: '',
-                    owner: ''
+                    owner: '',
+                    path: ''
                 }
                 const metadataFile = basePath + '/' + file + '/metadata.md'
                 if (fs.existsSync(metadataFile)) {
@@ -54,7 +52,7 @@ export class SystemNotebookService {
             }
         }
         return {
-            code: CodeOk, message:'',
+            code: CodeOk, message: '',
             data: {
                 range: notebooks,
                 count: notebooks.length,

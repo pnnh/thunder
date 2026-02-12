@@ -46,19 +46,19 @@ const createWindow = () => {
         const editSubmenu = new Menu();
 
         // 添加“剪切”项
-        editSubmenu.append(new MenuItem({ role: 'cut' }));  // Cmd/Ctrl + X
+        editSubmenu.append(new MenuItem({role: 'cut'}));  // Cmd/Ctrl + X
 
         // 添加分隔符
-        editSubmenu.append(new MenuItem({ type: 'separator' }));
+        editSubmenu.append(new MenuItem({type: 'separator'}));
 
         // 添加“复制”项（关键：启用 DevTools 控制台复制到系统剪贴板）
-        editSubmenu.append(new MenuItem({ role: 'copy' }));  // Cmd/Ctrl + C
+        editSubmenu.append(new MenuItem({role: 'copy'}));  // Cmd/Ctrl + C
 
         // 添加“粘贴”项
-        editSubmenu.append(new MenuItem({ role: 'paste' }));  // Cmd/Ctrl + V
+        editSubmenu.append(new MenuItem({role: 'paste'}));  // Cmd/Ctrl + V
 
         // 可选：添加更多项，如全选
-        editSubmenu.append(new MenuItem({ role: 'selectAll' }));
+        editSubmenu.append(new MenuItem({role: 'selectAll'}));
 
         // 创建“编辑”菜单项，并挂载子菜单
         const editMenuItem = new MenuItem({
@@ -70,8 +70,8 @@ const createWindow = () => {
         mainMenu.append(editMenuItem);
 
         const fileSubmenu = new Menu();
-        fileSubmenu.append(new MenuItem({ role: 'quit' }));
-        mainMenu.append(new MenuItem({ label: '文件', submenu: fileSubmenu }));
+        fileSubmenu.append(new MenuItem({role: 'quit'}));
+        mainMenu.append(new MenuItem({label: '文件', submenu: fileSubmenu}));
 
         Menu.setApplicationMenu(mainMenu);
     }
@@ -82,6 +82,7 @@ app.on('ready', () => {
     ipcMain.handle('getAppConfig', serverGetAppConfig)
     ipcMain.handle('storeArticle', ipcHandler.serverStoreArticle)
     ipcMain.handle('selectNotebooks', ipcHandler.serverSelectNotebooks)
+    ipcMain.handle('getNote', ipcHandler.serverGetNote)
     ipcMain.handle('selectLibraries', ipcHandler.serverSelectLibraries)
     ipcMain.handle('selectNotes', ipcHandler.serverSelectNotes)
     ipcMain.handle('openExternal', ipcHandler.openExternalUrl);
@@ -101,16 +102,16 @@ app.on('activate', () => {
 });
 
 // 每分钟执行一次文件系统到本地数据库的同步
-// if (!app.isPackaged) {
-//     initDatabase().then(() => {
-//         console.log("Database initialized successfully.");
-//         return runSync();
-//     }).then(() => {
-//         console.log("Initial sync completed successfully.");
-//     });
-//
-// }
-// cron.schedule("* * * * *", async () => {
-//     console.log("running a task every minute");
-//     await runSync();
-// });
+if (!app.isPackaged) {
+    initDatabase().then(() => {
+        console.log("Database initialized successfully.");
+        return runSync();
+    }).then(() => {
+        console.log("Initial sync completed successfully.");
+    });
+
+}
+cron.schedule("* * * * *", async () => {
+    console.log("running a task every minute");
+    await runSync();
+});

@@ -1,6 +1,4 @@
-import {PSChannelModel} from "./channel";
-
-export interface PSArticleModel {
+export interface PSNoteModel {
     title: string
     header: string
     body: string
@@ -26,7 +24,7 @@ export interface PSArticleModel {
     full_repo_path: string
 }
 
-export interface PSArticleMetadataModel {
+export interface PSNoteMetadataModel {
     uid: string
     image: string
     description: string
@@ -34,7 +32,7 @@ export interface PSArticleMetadataModel {
     tags: string
 }
 
-export interface PSArticleFileModel {
+export interface PSNoteFileModel {
     title: string
     path: string
     is_dir: boolean
@@ -42,11 +40,4 @@ export interface PSArticleFileModel {
     is_image: boolean
     storage_path: string
     full_repo_path: string
-}
-
-export function channelName(channel: string | PSChannelModel): string {
-    if (typeof channel === 'string') {
-        return channel
-    }
-    return channel.name
 }

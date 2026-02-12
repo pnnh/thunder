@@ -1,5 +1,5 @@
 import {IAppConfig} from "@/services/common/config";
-import {PSArticleModel} from "@/services/common/article";
+import {PSNoteModel} from "@/services/common/article";
 import {PLSelectResult} from "@/services/common/protocol";
 import {PSNotebookModel} from "@/services/common/notebook";
 
@@ -7,11 +7,13 @@ declare global {
     interface Window {
         serverAPI: {
             getAppConfig: () => Promise<IAppConfig>
-            storeArticle: (article: PSArticleModel) => Promise<void>
+            storeArticle: (article: PSNoteModel) => Promise<void>
             selectNotebooks: (string, string) => Promise<PLSelectResult<PSNotebookModel>>
             selectLibraries: () => Promise<PLSelectResult<PSLibraryModel>>
-            selectNotes: (string, string, string) => Promise<PLSelectResult<PSArticleModel>>
+            selectNotes: (notebookUrn: string, queryString: string) => Promise<PLSelectResult<PSNoteModel>>
+            getNote: (string) => Promise<PSNoteModel>
             openExternal: (url: string) => Promise<void>
+            openFolder: () => Promise<string>
         }
     }
 }
