@@ -8,6 +8,7 @@ import {WelcomePage} from "@/pages/welcome/welcome";
 import {NotebookPage} from "@/pages/notebook/page";
 import {NotesPage} from "@/pages/notes/page";
 import {NoteEditorPage} from "@/pages/notes/editor/page";
+import {MarkdownPage} from "@/pages/markdown/page";
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
         path: "/editor",
         element: <NoteEditorPage/>,
     },
+    {
+        path: "/markdown",
+        element: <MarkdownPage/>,
+    }
 ]);
 
 const rootElement = document.getElementById("root")
