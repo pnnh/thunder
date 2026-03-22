@@ -19,13 +19,9 @@ export default defineConfig((env) => {
         plugins: [react(), pluginExposeRenderer(name)],
         resolve: {
             preserveSymlinks: true,
-
             alias: [{
                 find: "@",
                 replacement: path.resolve(__dirname, "./src")
-            }, {
-                find: "~",
-                replacement: path.resolve(__dirname, "./node_modules")
             }]
         },
         clearScreen: false

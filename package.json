@@ -7,7 +7,9 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish"
+    "publish": "electron-forge publish",
+    "browser": "vite --mode browser --config vite.browser.config.ts",
+    "build": "tsc && vite build"
   },
   "version": "1.0.0",
   "main": ".vite/build/main.js",
