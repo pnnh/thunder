@@ -3,47 +3,47 @@
 import React from 'react'
 import {useAtom} from "jotai";
 import {css} from '@emotion/css';
-import {PSNoteModel} from "@/services/common/article";
-import {storeArticleToDatabase} from "@/services/client/personal/notes";
-import {noteAtom} from "@/pages/notebook/notebook";
-import {ArticleContainer} from "@/pages/notebook/partials/note";
+import {storeNoteToDatabase} from "@/services/client/personal/notes";
+import {noteAtom} from "@/pages/note/note";
+import {NoteContainer} from "@/pages/note/partials/note";
+import {PSNoteModel} from "@/services/common/note";
 
-export function ArticleEditorArea() {
-    const [selectedArticle, setSelectedArticle] = useAtom(noteAtom)
-    if (!selectedArticle || !selectedArticle.current || !selectedArticle.current.body) {
+export function NoteEditorArea() {
+    const [selectedNote, setSelectedNote] = useAtom(noteAtom)
+    if (!selectedNote || !selectedNote.current || !selectedNote.current.body) {
         return <div>Loading</div>
     }
-    const article = selectedArticle.current
+    const note = selectedNote.current
 
-    const changeArticle = (article: PSNoteModel) => {
-        setSelectedArticle({
-            current: article
+    const changeNote = (note: PSNoteModel) => {
+        setSelectedNote({
+            current: note
         })
-        storeArticleToDatabase(article).then(() => {
-            console.log('ArticleStored', article.uid)
+        storeNoteToDatabase(note).then(() => {
+            console.log('NoteStored', note.uid)
         })
     }
 
     return <div className={editorAreaStyle}>
         <div className={titleColStyle}>
-            <input value={selectedArticle.current.title} onChange={(event) => {
-                changeArticle({
-                        ...selectedArticle.current!,
+            <input value={selectedNote.current.title} onChange={(event) => {
+                changeNote({
+                        ...selectedNote.current!,
                         title: event.target.value
                     }
                 )
             }}/>
         </div>
         <div className={editColStyle}>
-            <textarea className={editTextStyle} value={article.body} onChange={(event) => {
-                changeArticle({
-                    ...selectedArticle.current!,
+            <textarea className={editTextStyle} value={note.body} onChange={(event) => {
+                changeNote({
+                    ...selectedNote.current!,
                     body: event.target.value
                 })
             }}></textarea>
         </div>
         <div className={previewColStyle}>
-            <ArticleContainer tocList={[]} header={article.header} body={article.body} assetsUrl={'xxx'}/>
+            <NoteContainer tocList={[]} header={note.header} body={note.body} assetsUrl={'xxx'}/>
         </div>
     </div>
 }

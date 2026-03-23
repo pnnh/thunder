@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import {stringToBase58} from "@pnnh/atom";
 import {RootLayout} from "@/pages/layout/layout";
 import {Link} from "react-router-dom";
+
 const styleWelcome = css`
     width: 640px;
     margin: 0 auto;
@@ -20,7 +21,7 @@ const styleTips = css`
     color: #666;
 `
 
-const styleActions  = css`
+const styleActions = css`
     margin-top: 2rem;
     width: 100%;
     display: flex;
@@ -45,18 +46,14 @@ export function OpenToolbar() {
         }}>打开本地目录</Button>
     </div>
 }
+
 export function WelcomePage() {
     return <RootLayout>
         <div className={styleWelcome}>
-        <h1>欢迎使用</h1>
-        <div className={styleTips}>请新建资料库或打开已有资料库</div>
-        <div className={styleActions}>
-            <button>新建资料库</button>
-            <button>打开资料库</button>
+            <h1>欢迎使用</h1>
+            <OpenToolbar/>
+            <Link to="/note">笔记本页面</Link>
         </div>
-        <OpenToolbar/>
-            <Link to="/notebook">笔记本页面</Link>
-    </div>
     </RootLayout>
 }
 

@@ -5,9 +5,7 @@ import {createRoot} from "react-dom/client";
 import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 import {Provider} from "jotai";
 import {WelcomePage} from "@/pages/welcome/welcome";
-import {NotebookPage} from "@/pages/notebook/page";
-import {NotesPage} from "@/pages/notes/page";
-import {NoteEditorPage} from "@/pages/notes/editor/page";
+import {NotePage} from "@/pages/note/page";
 import {MarkdownPage} from "@/pages/markdown/page";
 
 const router = createBrowserRouter([
@@ -16,16 +14,8 @@ const router = createBrowserRouter([
         element: <WelcomePage/>,
     },
     {
-        path: "/notebook",
-        element: <NotebookPage/>,
-    },
-    {
-        path: "/notes",
-        element: <NotesPage/>,
-    },
-    {
-        path: "/editor",
-        element: <NoteEditorPage/>,
+        path: "/note",
+        element: <NotePage/>,
     },
     {
         path: "/markdown",

@@ -1,10 +1,8 @@
-import {SystemNotebookService} from "@/services/server/system/channel";
-import {serverGetAppConfig} from "@/services/server/config";
+// import {SystemNoteService} from "@/services/server/system/channel";
+// import {serverGetAppConfig} from "@/services/server/config";
 
 // 由定时任务调用，同步文章数据到本地数据库
 export async function runSync() {
-    const serverConfig = await serverGetAppConfig()
-    const domainUrl = serverConfig.BLOG_PATH
-    const channelService = new SystemNotebookService(domainUrl)
-    await channelService.runSync()
+    // const serverConfig = await serverGetAppConfig()
+    // const domainUrl = serverConfig.BLOG_PATH
 }

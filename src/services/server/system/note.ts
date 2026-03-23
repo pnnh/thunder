@@ -4,19 +4,21 @@ import {
     CodeOk,
     createPaginationByPage,
     decodeBase64String,
+    emptySelectResult,
     encodeBase64String,
     getMimeType,
     isValidUUID,
     PLGetResult,
     PLSelectResult,
+    uuidV7,
 } from "@pnnh/atom";
-import path from "path";
+import {bulkInsertOrUpdateNotes} from "@/services/server/system/database";
+import {openMainDatabase} from "@/services/server/database/database";
+import {NewNoteModel, PSNoteFileModel, PSNoteMetadataModel, PSNoteModel,} from "@/services/common/note";
 import fs from "node:fs";
 import frontMatter from "front-matter";
+import path from "path";
 import {resolvePath} from "@pnnh/atom/nodejs";
-import {bulkInsertOrUpdateArticles} from "@/services/server/system/database";
-import {openMainDatabase} from "@/services/server/database/database";
-import {PSNoteFileModel, PSNoteMetadataModel, PSNoteModel} from "@/services/common/note";
 
 const assetsIgnore = ignore().add(['.*', 'node_modules', 'dist', 'build', 'out', 'target', 'logs', 'logs/*', 'logs/**/*'])
 
@@ -67,8 +69,8 @@ export class SystemNoteService {
         this.systemDomain = resolvePath(systemDomain)
     }
 
-    async syncArticlesInChannel(channelUrn: string, channelFullPath: string) {
-        const articles: PSNoteModel[] = []
+    async syncNotesInChannel(channelUrn: string, channelFullPath: string) {
+        const notes: PSNoteModel[] = []
         const files = fs.readdirSync(channelFullPath)
         for (const file of files) {
 
@@ -76,18 +78,18 @@ export class SystemNoteService {
             const stat = fs.statSync(fullPath)
             const extName = path.extname(file)
             if ((stat.isDirectory() && extName === '.note')) {
-                const model = await this.#parseArticleInfo(channelUrn, fullPath)
+                const model = await this.#parseNoteInfo(channelUrn, fullPath)
                 if (model) {
-                    articles.push(model)
+                    notes.push(model)
                 }
             }
         }
-        await bulkInsertOrUpdateArticles(articles)
-        return articles
+        await bulkInsertOrUpdateNotes(notes)
+        return notes
     }
 
-    async selectArticlesFromDatabase(page: number, size: number, sort: string, keyword: string,
-                                     filter: string, channel: string): Promise<PLSelectResult<PSNoteModel>> {
+    async selectNotesFromDatabase(page: number, size: number, sort: string, keyword: string,
+                                  filter: string, channel: string): Promise<PLSelectResult<PSNoteModel>> {
 
         const db = await openMainDatabase();
         const {limit, offset} = createPaginationByPage(page, size);
@@ -135,23 +137,23 @@ export class SystemNoteService {
         }
     }
 
-    async getArticle(channelUrn: string, articleUrn: string) {
+    async getNote(channelUrn: string, noteUrn: string) {
         const channelPath = decodeBase64String(channelUrn)
-        const articlePath = decodeBase64String(articleUrn)
-        let fullPath = path.join(this.systemDomain, channelPath, articlePath)
+        const notePath = decodeBase64String(noteUrn)
+        let fullPath = path.join(this.systemDomain, channelPath, notePath)
 
         const stat = fs.statSync(fullPath)
         if (stat.isDirectory()) {
-            return await this.#parseArticleInfo(channelPath, fullPath)
+            return await this.#parseNoteInfo(channelPath, fullPath)
         }
-        fullPath = path.join(this.systemDomain, channelPath, `${articleUrn}.md`)
+        fullPath = path.join(this.systemDomain, channelPath, `${noteUrn}.md`)
         if (fs.existsSync(fullPath)) {
-            return await this.#parseArticleInfo(channelPath, fullPath)
+            return await this.#parseNoteInfo(channelPath, fullPath)
         }
         return undefined
     }
 
-    async findArticleFromDatabase(uid: string): Promise<PLGetResult<PSNoteModel | undefined>> {
+    async findNoteFromDatabase(uid: string): Promise<PLGetResult<PSNoteModel | undefined>> {
         const db = await openMainDatabase()
         const result = await db.all<PSNoteModel[]>(
             `select * from notes where uid = :uid limit 1`, {
@@ -171,9 +173,9 @@ export class SystemNoteService {
         }
     }
 
-    async selectFiles(channelUrn: string, articleUrn: string, parentUrn: string): Promise<PLSelectResult<PSNoteFileModel>> {
+    async selectFiles(channelUrn: string, noteUrn: string, parentUrn: string): Promise<PLSelectResult<PSNoteFileModel>> {
 
-        const files = this.#scanFiles(channelUrn, articleUrn, parentUrn)
+        const files = this.#scanFiles(channelUrn, noteUrn, parentUrn)
         return {
             code: CodeOk,
             message: '',
@@ -186,11 +188,11 @@ export class SystemNoteService {
         }
     }
 
-    readAssets(channelUrn: string, articleUrn: string, assetsUrn: string) {
+    readAssets(channelUrn: string, noteUrn: string, assetsUrn: string) {
         const channelPath = decodeBase64String(channelUrn)
-        const articlePath = decodeBase64String(articleUrn)
+        const notePath = decodeBase64String(noteUrn)
         const assetsPath = decodeBase64String(assetsUrn)
-        const fullPath = path.join(this.systemDomain, channelPath, articlePath, assetsPath)
+        const fullPath = path.join(this.systemDomain, channelPath, notePath, assetsPath)
 
         const stat = fs.statSync(fullPath)
         if (stat && stat.isFile() && stat.size < 4096000) {
@@ -203,9 +205,54 @@ export class SystemNoteService {
         return undefined
     }
 
-    async #parseArticleInfo(channelUrn: string, articleFullPath: string): Promise<PSNoteModel | undefined> {
-        const extName = path.extname(articleFullPath)
-        const noteName = path.basename(articleFullPath, extName)
+    async selectNotes(libraryUrn: string): Promise<PLSelectResult<PSNoteModel>> {
+        const basePath = this.systemDomain
+        const notes: PSNoteModel[] = []
+        const libraryFileName = decodeBase64String(libraryUrn)
+        if (!fs.existsSync(path.join(basePath, libraryFileName))) {
+            return emptySelectResult()
+        }
+        const files = fs.readdirSync(path.join(basePath, libraryFileName))
+        for (const file of files) {
+            const stat = fs.statSync(path.join(basePath, libraryFileName, file))
+            if (stat.isDirectory() && file.endsWith('.note')) {
+                const noteName = path.basename(file, path.extname(file))
+                const noteUniqueName = uuidV7()//encodeMD5Format(file)
+
+                const model = NewNoteModel()
+                model.uid = noteUniqueName
+                model.name = noteName
+                const metadataFile = basePath + '/' + file + '/metadata.md'
+                if (fs.existsSync(metadataFile)) {
+                    const metadataText = fs.readFileSync(metadataFile, 'utf-8')
+                    const metadata = frontMatter(metadataText).attributes as
+                        { image: string, description: string, title: string }
+                    if (metadata) {
+                        if (metadata.description) {
+                            model.description = metadata.description
+                        }
+                        if (metadata.title) {
+                            model.name = metadata.title
+                        }
+                    }
+                }
+                notes.push(model)
+            }
+        }
+        return {
+            code: CodeOk, message: '',
+            data: {
+                range: notes,
+                count: notes.length,
+                page: 1,
+                size: notes.length
+            }
+        }
+    }
+
+    async #parseNoteInfo(channelUrn: string, noteFullPath: string): Promise<PSNoteModel | undefined> {
+        const extName = path.extname(noteFullPath)
+        const noteName = path.basename(noteFullPath, extName)
 
         const model: PSNoteModel = {
             uid: '', discover: 0,
@@ -225,7 +272,7 @@ export class SystemNoteService {
             url: '', repo_url: '', full_repo_url: '', full_repo_path: ''
         }
 
-        await fillNoteMetadata(articleFullPath, model)
+        await fillNoteMetadata(noteFullPath, model)
 
         if (!model.uid || !model.title) {
             return undefined
@@ -233,12 +280,12 @@ export class SystemNoteService {
         return model
     }
 
-    #scanFiles(channelUrn: string, articleUrn: string, parentUrn: string): PSNoteFileModel[] {
+    #scanFiles(channelUrn: string, noteUrn: string, parentUrn: string): PSNoteFileModel[] {
         const channelPath = decodeBase64String(channelUrn)
-        const articlePath = decodeBase64String(articleUrn)
+        const notePath = decodeBase64String(noteUrn)
         const parentPath = parentUrn ? decodeBase64String(parentUrn) : ''
 
-        const parentFullPath = path.join(this.systemDomain, channelPath, articlePath, parentPath)
+        const parentFullPath = path.join(this.systemDomain, channelPath, notePath, parentPath)
         if (!fs.existsSync(parentFullPath)) {
             return []
         }

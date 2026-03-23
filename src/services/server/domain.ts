@@ -1,10 +1,9 @@
 import {PSLibraryModel} from "@/services/common/library";
-import {PSNotebookModel} from "@/services/common/notebook";
 import {PSNoteModel} from "@/services/common/note";
 import fs from "node:fs";
 import path from "path";
 import {CodeOk, decodeBase58String, emptySelectResult, PLSelectResult, uuidV7} from "@pnnh/atom";
-import {fillNoteMetadata} from "@/services/server/system/article";
+import {fillNoteMetadata} from "@/services/server/system/note";
 import {resolvePath} from "@pnnh/atom/nodejs";
 
 class ServerDomain {
@@ -199,58 +198,8 @@ class ServerDomain {
         return Promise.resolve(result)
     }
 
-    async serverSelectNotebooks(): Promise<PLSelectResult<PSNotebookModel>> {
-        // return await selectNotebooksFromDatabase(1, 999)
-        const rangeList: PSNotebookModel[] = [
-            {
-                uid: 'default',
-                name: '默认笔记本',
-                description: '这是一个默认的笔记本',
-                create_time: "",
-                update_time: "",
-                image: "",
-                profile: "",
-                owner: "",
-                path: ""
-            },
-            {
-                uid: 'default2',
-                name: '默认笔记本2',
-                description: '这是一个默认的笔记本2',
-                create_time: "",
-                update_time: "",
-                image: "",
-                profile: "",
-                owner: "",
-                path: ""
-            },
-            {
-                uid: 'default3',
-                name: "mac笔记本CPlus CMake笔记本",
-                description: '这是一个默认的笔记本2',
-                create_time: "",
-                update_time: "",
-                image: "",
-                profile: "",
-                owner: "",
-                path: "file://home/Projects/github/blog/CPlus.notelibrary/CMake笔记本.notebook",
-            }
-        ]
-        const result: PLSelectResult<PSNotebookModel> = {
-            code: CodeOk,
-            message: 'success',
-            data: {
-                count: rangeList.length,
-                range: rangeList,
-                page: 1,
-                size: rangeList.length
-            }
-        }
-        return Promise.resolve(result)
-    }
-
-    serverStoreArticle(article: PSNoteModel): Promise<void> {
-        console.debug('serverStoreArticle', article)
+    serverStoreNote(note: PSNoteModel): Promise<void> {
+        console.debug('serverStoreNote', note)
         return Promise.resolve()
     }
 }

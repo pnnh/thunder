@@ -1,5 +1,4 @@
 import {HostNavbar} from "./navbar";
-import {ConsoleFeature} from "./feature";
 import {css} from "@emotion/css";
 
 const rootStyle = css`
@@ -12,7 +11,6 @@ const rootStyle = css`
 
 export function RootLayout({children}: { children: React.ReactNode }) {
     return <div className={rootStyle}>
-        <ConsoleFeature/>
         <main>
             <HostNavbar/>
             {children}

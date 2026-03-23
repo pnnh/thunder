@@ -9,11 +9,11 @@
     "sourceMap": true,
     "baseUrl": ".",
     "outDir": "dist",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "types": [
-      "node",
+      "node"
     ],
     "typeRoots": [
       "node_modules/@types",

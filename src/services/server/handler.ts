@@ -4,17 +4,11 @@ import {PSNoteModel} from "@/services/common/note";
 
 export class IpcHandler {
 
-    async serverStoreArticle(event: Electron.Event, article: PSNoteModel) {
-        console.log('serverStoreArticle', article)
+    async serverStoreNote(event: Electron.Event, note: PSNoteModel) {
+        console.log('serverStoreNote', note)
         const domain = await serverSigninDomain()
-        await domain.serverStoreArticle(article)
-        return 'serverStoreArticle'
-    }
-
-    async serverSelectNotebooks(event: Electron.Event) {
-        console.log('serverSelectNotebooks')
-        const domain = await serverSigninDomain()
-        return await domain.serverSelectNotebooks()
+        await domain.serverStoreNote(note)
+        return 'serverStoreNote'
     }
 
     async serverGetNote(event: Electron.Event) {

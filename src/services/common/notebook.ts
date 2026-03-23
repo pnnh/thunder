@@ -1,4 +1,4 @@
-export interface PSNotebookModel {
+export interface PSNoteModel {
     uid: string
     create_time: string
     update_time: string
@@ -10,7 +10,7 @@ export interface PSNotebookModel {
     path: string
 }
 
-export interface PSNotebookMetadataModel {
+export interface PSNoteMetadataModel {
     uid: string
     image: string,
     description: string,

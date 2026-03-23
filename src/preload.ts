@@ -3,10 +3,9 @@ import {PSNoteModel} from "@/services/common/note";
 
 contextBridge.exposeInMainWorld('serverAPI', {
     getAppConfig: () => ipcRenderer.invoke('getAppConfig'),
-    storeArticle: (article: PSNoteModel) => ipcRenderer.invoke('storeArticle', article),
-    selectNotebooks: () => ipcRenderer.invoke('selectNotebooks'),
-    selectLibraries: () => ipcRenderer.invoke('selectLibraries'),
+    storeNote: (note: PSNoteModel) => ipcRenderer.invoke('storeNote', note),
     selectNotes: () => ipcRenderer.invoke('selectNotes'),
+    selectLibraries: () => ipcRenderer.invoke('selectLibraries'),
     getNote: () => ipcRenderer.invoke('getNote'),
     openExternal: (url: string) => ipcRenderer.invoke('openExternal', url),
     openFolder: () => ipcRenderer.invoke('openFolder'),

@@ -1,16 +1,15 @@
 import {IAppConfig} from "@/services/common/config";
-import {PSNoteModel} from "@/services/common/article";
+import {PSNoteModel} from "@/services/common/note";
 import {PLSelectResult} from "@/services/common/protocol";
-import {PSNotebookModel} from "@/services/common/notebook";
 
 declare global {
     interface Window {
         serverAPI: {
             getAppConfig: () => Promise<IAppConfig>
-            storeArticle: (article: PSNoteModel) => Promise<void>
-            selectNotebooks: (string, string) => Promise<PLSelectResult<PSNotebookModel>>
+            storeNote: (note: PSNoteModel) => Promise<void>
+            selectNotes: (string, string) => Promise<PLSelectResult<PSNoteModel>>
             selectLibraries: () => Promise<PLSelectResult<PSLibraryModel>>
-            selectNotes: (notebookUrn: string, queryString: string) => Promise<PLSelectResult<PSNoteModel>>
+            selectNotes: (noteUrn: string, queryString: string) => Promise<PLSelectResult<PSNoteModel>>
             getNote: (string) => Promise<PSNoteModel>
             openExternal: (url: string) => Promise<void>
             openFolder: () => Promise<string>

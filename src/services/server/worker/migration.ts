@@ -1,9 +1,9 @@
-import {openDatabase, openMainDatabase} from "@/services/server/database/database";
+import {openMainDatabase} from "@/services/server/database/database";
 
 export async function initDatabase() {
     const database = await openMainDatabase()
     await database.exec(`
-        CREATE TABLE IF NOT EXISTS notebooks
+        CREATE TABLE IF NOT EXISTS notes
         (
             uid TEXT PRIMARY KEY,
             name TEXT NOT NULL,
@@ -33,7 +33,7 @@ export async function initDatabase() {
             uid TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             description TEXT,
-            article TEXT,
+            note TEXT,
             create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
             update_time DATETIME DEFAULT CURRENT_TIMESTAMP,
             channel TEXT

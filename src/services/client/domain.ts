@@ -1,23 +1,22 @@
 import {PLSelectResult} from "@pnnh/atom";
 import {PSLibraryModel} from "@/services/common/library";
-import {PSNotebookModel} from "@/services/common/notebook";
 import {PSNoteModel} from "@/services/common/note";
 
 export interface IClientDomain {
     selectLibraries(): Promise<PLSelectResult<PSLibraryModel>>
 
-    selectNotebooks(libraryUrn: string, queryString: string): Promise<PLSelectResult<PSNotebookModel>>
+    selectNotes(libraryUrn: string, queryString: string): Promise<PLSelectResult<PSNoteModel>>
 
-    selectNotes(notebookUrn: string, queryString: string): Promise<PLSelectResult<PSNoteModel>>
+    selectNotes(noteUrn: string, queryString: string): Promise<PLSelectResult<PSNoteModel>>
 }
 
 class ClientDomain implements IClientDomain {
-    async selectNotes(notebookUrn: string, queryString: string): Promise<PLSelectResult<PSNoteModel>> {
-        return await window.serverAPI.selectNotes(notebookUrn, queryString)
+    async selectNotes(noteUrn: string, queryString: string): Promise<PLSelectResult<PSNoteModel>> {
+        return await window.serverAPI.selectNotes(noteUrn, queryString)
     }
 
-    async selectNotebooks(libraryUrn: string, queryString: string): Promise<PLSelectResult<PSNotebookModel>> {
-        return await window.serverAPI.selectNotebooks(libraryUrn, queryString)
+    async selectNotes(libraryUrn: string, queryString: string): Promise<PLSelectResult<PSNoteModel>> {
+        return await window.serverAPI.selectNotes(libraryUrn, queryString)
     }
 
     async selectLibraries(): Promise<PLSelectResult<PSLibraryModel>> {

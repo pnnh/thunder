@@ -24,6 +24,33 @@ export interface PSNoteModel {
     full_repo_path: string
 }
 
+export function NewNoteModel(): PSNoteModel {
+    return {
+        body: "",
+        channel: "",
+        channel_name: "",
+        cover: "",
+        coverUrl: "",
+        creator: "",
+        discover: 0,
+        full_repo_path: "",
+        full_repo_url: "",
+        header: "",
+        keywords: "",
+        lang: "",
+        partition: "",
+        repo_url: "",
+        title: "",
+        url: "",
+        create_time: "", update_time: "",
+        uid: '',
+        name: '',
+        description: '',
+        owner: '',
+        path: ''
+    }
+}
+
 export interface PSNoteMetadataModel {
     uid: string
     image: string

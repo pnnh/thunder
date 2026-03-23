@@ -13,11 +13,11 @@ export const TransTexts: {
         "pt-PT": "HUABLE",
         "zh-TW": "希波"
     },
-    "navArticles": {
+    "navNotes": {
         "zh": "文章",
-        "en": "Articles",
+        "en": "Notes",
         "es": "Artículos",
-        "fr": "Articles",
+        "fr": "Notes",
         "ja": "記事",
         "de-DE": "Artikel",
         "pt-PT": "Artigos",

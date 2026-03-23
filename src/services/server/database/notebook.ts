@@ -1,35 +1,34 @@
-import {CodeNotFound, CodeOk, PLGetResult, PLSelectResult} from "@pnnh/atom";
+import {CodeNotFound, CodeOk, createPaginationByPage, PLGetResult, PLSelectResult} from "@pnnh/atom";
 import {openMainDatabase} from "@/services/server/database/database";
-import {createPaginationByPage} from "@pnnh/atom";
-import {PSNotebookModel} from "@/services/common/notebook";
+import {PSNoteModel} from "@/services/common/note";
 
-async function findNotebookFromDatabase(uid: string): Promise<PLGetResult<PSNotebookModel | undefined>> {
+async function findNoteFromDatabase(uid: string): Promise<PLGetResult<PSNoteModel | undefined>> {
     const db = await openMainDatabase()
-    const result = await db.all<PSNotebookModel[]>(
-        `select * from notebooks where uid = :uid limit 1`, {
+    const result = await db.all<PSNoteModel[]>(
+        `select * from notes where uid = :uid limit 1`, {
             ':uid': uid,
         })
     if (!result || result.length === 0) {
+        return {
+            code: CodeNotFound,
+            message: '',
+            data: undefined
+        }
+    }
     return {
-        code: CodeNotFound,
+        code: CodeOk,
         message: '',
-        data: undefined
+        data: result[0]
     }
 }
-return {
-    code: CodeOk,
-    message: '',
-    data: result[0]
-}
-}
 
 
-export async function selectNotebooksFromDatabase(page: number, size: number): Promise<PLSelectResult<PSNotebookModel>> {
+export async function selectNotesFromDatabase(page: number, size: number): Promise<PLSelectResult<PSNoteModel>> {
 
     const db = await openMainDatabase();
     const {limit, offset} = createPaginationByPage(page, size);
 
-    let selectSql = `SELECT * FROM notebooks WHERE 1 = 1 `;
+    let selectSql = `SELECT * FROM notes WHERE 1 = 1 `;
     let selectParams: any = {}
 
     const count = await db.get<{ total: number }>(
@@ -41,7 +40,7 @@ export async function selectNotebooksFromDatabase(page: number, size: number): P
     selectSql += ` LIMIT :limit OFFSET :offset`;
     selectParams[":limit"] = limit;
     selectParams[":offset"] = offset;
-    const result = await db.all<PSNotebookModel[]>(
+    const result = await db.all<PSNoteModel[]>(
         selectSql, selectParams,
     );
     return {

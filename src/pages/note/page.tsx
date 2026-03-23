@@ -1,15 +1,15 @@
 import React, {useState} from 'react'
 import {encodeBase58String, PLSelectData} from "@pnnh/atom";
-import {PSNotebookModel} from "@/services/common/notebook";
+import {PSNoteModel} from "@/services/common/note";
 import {RootLayout} from "@/pages/layout/layout";
 import {Link} from "react-router-dom";
 
-export function NotebookPage() {
-    const [selectData, setSelectData] = useState<PLSelectData<PSNotebookModel>>()
-    window.serverAPI.selectNotebooks('aa', 'bb').then(selectResult => {
+export function NotePage() {
+    const [selectData, setSelectData] = useState<PLSelectData<PSNoteModel>>()
+    window.serverAPI.selectNotes('aa', 'bb').then(selectResult => {
 
         if (!selectResult || selectResult.code !== 200) {
-            throw new Error("host notebook")
+            throw new Error("host note")
         }
         setSelectData(selectResult.data);
     })

@@ -80,11 +80,10 @@ const createWindow = () => {
 const ipcHandler = new IpcHandler()
 app.on('ready', () => {
     ipcMain.handle('getAppConfig', serverGetAppConfig)
-    ipcMain.handle('storeArticle', ipcHandler.serverStoreArticle)
-    ipcMain.handle('selectNotebooks', ipcHandler.serverSelectNotebooks)
+    ipcMain.handle('storeNote', ipcHandler.serverStoreNote)
+    ipcMain.handle('selectNotes', ipcHandler.serverSelectNotes)
     ipcMain.handle('getNote', ipcHandler.serverGetNote)
     ipcMain.handle('selectLibraries', ipcHandler.serverSelectLibraries)
-    ipcMain.handle('selectNotes', ipcHandler.serverSelectNotes)
     ipcMain.handle('openExternal', ipcHandler.openExternalUrl);
     ipcMain.handle('openFolder', ipcHandler.openFolder);
 
