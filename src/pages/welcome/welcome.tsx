@@ -2,8 +2,9 @@ import * as React from "react";
 import {css} from "@emotion/css";
 
 import Button from "@mui/material/Button";
-import {stringToBase58} from "@pnnh/atom";
+import {encodeBase58String} from "@pnnh/atom";
 import {RootLayout} from "@/pages/layout/layout";
+import {useNavigate} from "react-router-dom";
 
 const styleWelcome = css`
     width: 640px;
@@ -31,6 +32,7 @@ const styleActions = css`
 
 
 export function OpenToolbar() {
+    const navigate = useNavigate()
     return <div>
         <Button onClick={() => {
             window.serverAPI.openFolder().then((dir: string) => {
@@ -38,8 +40,10 @@ export function OpenToolbar() {
                 if (!dir) {
                     return
                 }
-                const dirParam = stringToBase58(dir, 'base58')
-                window.location.href = `/note?loc=${dirParam}`
+                // Encode the directory as a file:// URI before base58-encoding
+                const fileUri = 'file://' + dir
+                const dirParam = encodeBase58String(fileUri)
+                navigate(`/note?loc=${dirParam}`)
             })
         }}>打开本地目录</Button>
     </div>

@@ -1,8 +1,7 @@
-import {PSNoteModel} from "@/services/common/note";
+import {PSNoteFileModel, PSNoteModel} from "@/services/common/note";
 import fs from "node:fs";
 import path from "path";
-import {CodeOk, decodeBase58String, emptySelectResult, PLSelectResult, uuidV7} from "@pnnh/atom";
-import {fillNoteMetadata} from "@/services/host/system/note";
+import {CodeOk, decodeBase58String, emptySelectResult, PLSelectResult} from "@pnnh/atom";
 import {resolvePath} from "@pnnh/atom/nodejs";
 
 export class HostDomain {
@@ -39,126 +38,69 @@ export class HostDomain {
         return Promise.resolve(result)
     }
 
-    async hostSelectNotes(bookUrn: string): Promise<PLSelectResult<PSNoteModel>> {
-
-        const notes: PSNoteModel[] = []
-        const deBookUrn = decodeBase58String(bookUrn)
-        if (!deBookUrn.startsWith("file://")) {
+    async hostSelectNotes(dirUrn: string): Promise<PLSelectResult<PSNoteFileModel>> {
+        const files: PSNoteFileModel[] = []
+        const decodedUri = decodeBase58String(dirUrn)
+        if (!decodedUri.startsWith("file://")) {
             throw new Error('仅支持文件系统目录')
         }
-        const fullBookPath = resolvePath(deBookUrn)
-        if (!fs.existsSync(fullBookPath)) {
+        const fullDirPath = resolvePath(decodedUri)
+        if (!fs.existsSync(fullDirPath)) {
             return emptySelectResult()
         }
-        const files = fs.readdirSync(fullBookPath)
-        for (const file of files) {
-            const stat = fs.statSync(path.join(fullBookPath, file))
-            if (stat.isDirectory() && file.endsWith('.note')) {
-                const noteName = path.basename(file, path.extname(file))
-                const noteUniqueName = uuidV7() //encodeMD5Format(file)
-                let noteDirectoryFullPath = path.join(fullBookPath, file)
-                const model: PSNoteModel = {
-                    creator: "",
-                    body: "",
-                    channel: "",
-                    cover: "",
-                    discover: 0,
-                    header: "markdown",
-                    keywords: "",
-                    partition: "",
-                    path: `${deBookUrn}/${file}`,
-                    title: noteName,
-                    create_time: "", update_time: "",
-                    uid: noteUniqueName,
-                    description: '',
-                    owner: '',
-                    lang: '',
-                    channel_name: '',
-                    name: '',
-                    url: '',
-                    repo_url: '',
-                    full_repo_url: '',
-                    full_repo_path: '',
-                    coverUrl: ''
-                }
-                await fillNoteMetadata(noteDirectoryFullPath, model)
-                notes.push(model)
+        const entries = fs.readdirSync(fullDirPath)
+        for (const entry of entries) {
+            // skip hidden files/dirs
+            if (entry.startsWith('.')) continue
+            const fullEntryPath = path.join(fullDirPath, entry)
+            const stat = fs.statSync(fullEntryPath)
+            const entryUri = 'file://' + fullEntryPath
+
+            if (stat.isDirectory()) {
+                files.push({
+                    title: entry,
+                    path: entryUri,
+                    is_dir: true,
+                    is_text: false,
+                    is_image: false,
+                    storage_path: fullEntryPath,
+                    full_repo_path: fullEntryPath,
+                })
+            } else if (entry.endsWith('.md') || entry.endsWith('.markdown')) {
+                const title = path.basename(entry, path.extname(entry))
+                files.push({
+                    title,
+                    path: entryUri,
+                    is_dir: false,
+                    is_text: true,
+                    is_image: false,
+                    storage_path: fullEntryPath,
+                    full_repo_path: fullEntryPath,
+                })
             }
         }
         return {
             code: CodeOk,
             message: '',
             data: {
-                range: notes,
-                count: notes.length,
+                range: files,
+                count: files.length,
                 page: 1,
-                size: notes.length
-            }
+                size: files.length,
+            },
         }
+    }
 
-        // const rangeList: PSNoteModel[] = [
-        //     {
-        //         title: "第一个笔记",
-        //         header: "dfd",
-        //         body: "fsdfds",
-        //         create_time: "",
-        //         update_time: "",
-        //         creator: "",
-        //         keywords: "fdsfds",
-        //         description: "",
-        //         cover: "",
-        //         discover: 0,
-        //         owner: "",
-        //         channel: "",
-        //         partition: "",
-        //         path: "",
-        //         uid: "",
-        //         lang: '',
-        //         channel_name: '',
-        //         name: '',
-        //         url: '',
-        //         repo_url: '',
-        //         full_repo_url: '',
-        //         full_repo_path: '',
-        //         coverUrl: ''
-        //     },
-        //     {
-        //         title: "第二个笔记",
-        //         header: "dfd",
-        //         body: "fsdfds",
-        //         create_time: "",
-        //         update_time: "",
-        //         creator: "",
-        //         keywords: "fdsfds",
-        //         description: "",
-        //         cover: "",
-        //         discover: 0,
-        //         owner: "",
-        //         channel: "",
-        //         partition: "",
-        //         path: "",
-        //         uid: "",
-        //         lang: '',
-        //         channel_name: '',
-        //         name: '',
-        //         url: '',
-        //         repo_url: '',
-        //         full_repo_url: '',
-        //         full_repo_path: '',
-        //         coverUrl: ''
-        //     }
-        // ]
-        // const result: PLSelectResult<PSNoteModel> = {
-        //     code: CodeOk,
-        //     message: 'success',
-        //     data: {
-        //         count: rangeList.length,
-        //         range: rangeList,
-        //         page: 1,
-        //         size: rangeList.length
-        //     }
-        // }
-        // return Promise.resolve(result)
+    async hostReadNote(notePath: string): Promise<string> {
+        const decodedUri = decodeBase58String(notePath)
+        const fullPath = resolvePath(decodedUri)
+        return fs.readFileSync(fullPath, 'utf-8')
+    }
+
+    async hostSaveNote(notePath: string, content: string): Promise<void> {
+        const decodedUri = decodeBase58String(notePath)
+        const fullPath = resolvePath(decodedUri)
+        fs.writeFileSync(fullPath, content, 'utf-8')
     }
 
     hostStoreNote(note: PSNoteModel): Promise<void> {

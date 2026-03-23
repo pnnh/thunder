@@ -12,16 +12,26 @@ export class IpcHandler {
     }
 
     async hostGetNote(event: Electron.Event) {
-
         const domain = HostDomain.instance()
         return await domain.getNote()
     }
 
-
-    async hostSelectNotes(event: Electron.Event, bookUrn: string) {
-        console.log('hostSelectNotes')
+    async hostSelectNotes(event: Electron.Event, dirUrn: string) {
+        console.log('hostSelectNotes', dirUrn)
         const domain = HostDomain.instance()
-        return await domain.hostSelectNotes(bookUrn)
+        return await domain.hostSelectNotes(dirUrn)
+    }
+
+    async hostReadNote(event: Electron.Event, notePath: string): Promise<string> {
+        console.log('hostReadNote', notePath)
+        const domain = HostDomain.instance()
+        return await domain.hostReadNote(notePath)
+    }
+
+    async hostSaveNote(event: Electron.Event, notePath: string, content: string): Promise<void> {
+        console.log('hostSaveNote', notePath)
+        const domain = HostDomain.instance()
+        await domain.hostSaveNote(notePath, content)
     }
 
     async openExternalUrl(event: Electron.Event, url: string) {
@@ -29,20 +39,18 @@ export class IpcHandler {
         return await shell.openExternal(url)
     }
 
-
     async openFolder(): Promise<string | null> {
         try {
             const result = await dialog.showOpenDialog({
-                title: '选择文件夹', // 可选：自定义标题
-                defaultPath: '/Users/yourname/Documents', // 可选：默认路径
-                properties: ['openDirectory'] // 关键：允许选择文件夹
-                // 如果需要多选：properties: ['openDirectory', 'multiSelections']
+                title: '选择文件夹',
+                defaultPath: '/Users/yourname/Documents',
+                properties: ['openDirectory']
             });
 
             if (!result.canceled && result.filePaths.length > 0) {
-                const folderPath = result.filePaths[0]; // 获取完整路径
+                const folderPath = result.filePaths[0];
                 console.log('选中的文件夹路径：', folderPath);
-                return folderPath; // 返回路径
+                return folderPath;
             } else {
                 console.log('用户取消了选择');
                 return null;

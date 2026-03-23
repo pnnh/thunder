@@ -83,6 +83,8 @@ app.on('ready', () => {
     ipcMain.handle('storeNote', ipcHandler.hostStoreNote)
     ipcMain.handle('selectNotes', ipcHandler.hostSelectNotes)
     ipcMain.handle('getNote', ipcHandler.hostGetNote)
+    ipcMain.handle('readNote', ipcHandler.hostReadNote)
+    ipcMain.handle('saveNote', ipcHandler.hostSaveNote)
     ipcMain.handle('openExternal', ipcHandler.openExternalUrl);
     ipcMain.handle('openFolder', ipcHandler.openFolder);
 

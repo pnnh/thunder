@@ -1,98 +1,70 @@
 'use client'
 
-import React from 'react'
-import {useAtom} from "jotai";
+import React, {useEffect, useState} from 'react'
 import {css} from '@emotion/css';
-import {storeNoteToDatabase} from "@/services/client/notes";
-import {noteAtom} from "@/pages/note/note";
-import {PSNoteModel} from "@/services/common/note";
 import {BuildBodyHtml} from "./body";
+import {useSearchParams} from "react-router-dom";
+import {RootLayout} from "@/pages/layout/layout";
 
 export function ViewPage() {
-    const [selectedNote, setSelectedNote] = useAtom(noteAtom)
-    if (!selectedNote || !selectedNote.current || !selectedNote.current.body) {
-        return <div>Loading</div>
-    }
-    const note = selectedNote.current
+    const [searchParams] = useSearchParams()
+    const [content, setContent] = useState<string>('')
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string>('')
 
-    const changeNote = (note: PSNoteModel) => {
-        setSelectedNote({
-            current: note
+    const encodedPath = searchParams.get('path')
+
+    useEffect(() => {
+        if (!encodedPath) return
+        setLoading(true)
+        setError('')
+        window.serverAPI.readNote(encodedPath).then(text => {
+            setContent(text)
+        }).catch(err => {
+            console.error('Failed to read note', err)
+            setError('文件加载失败')
+        }).finally(() => {
+            setLoading(false)
         })
-        storeNoteToDatabase(note).then(() => {
-            console.log('NoteStored', note.uid)
-        })
+    }, [encodedPath])
+
+    if (!encodedPath) {
+        return <RootLayout><div className={msgStyle}>未指定文件路径</div></RootLayout>
+    }
+    if (loading) {
+        return <RootLayout><div className={msgStyle}>加载中...</div></RootLayout>
+    }
+    if (error) {
+        return <RootLayout><div className={msgStyle}>{error}</div></RootLayout>
     }
 
-    return <div className={editorAreaStyle}>
-        <div className={titleColStyle}>
-            <input value={selectedNote.current.title} onChange={(event) => {
-                changeNote({
-                        ...selectedNote.current!,
-                        title: event.target.value
-                    }
-                )
-            }}/>
+    return <RootLayout>
+        <div className={viewerAreaStyle}>
+            <div className={previewStyle}>
+                <BuildBodyHtml header="markdown" body={content}/>
+            </div>
         </div>
-        <div className={editColStyle}>
-            <textarea className={editTextStyle} value={note.body} onChange={(event) => {
-                changeNote({
-                    ...selectedNote.current!,
-                    body: event.target.value
-                })
-            }}></textarea>
-        </div>
-        <div className={previewColStyle}>
-            <BuildBodyHtml header={note.header} body={note.body}/>
-        </div>
-    </div>
+    </RootLayout>
 }
 
-const editorAreaStyle = css`
+const msgStyle = css`
+    padding: 2rem;
+    color: #666;
+`
+
+const viewerAreaStyle = css`
     height: 100%;
-`;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+`
 
-const titleColStyle = css`
-    height: 3rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border-bottom: solid 1px #e3e3e3;
-
-    input {
-        margin-left: 1rem;
-        width: 98%;
-        outline: none;
-        border: 0;
-        font-size: 1.5rem;
-        font-weight: 400;
-    }
-`;
-
-const editColStyle = css`
-    height: calc(60% - 3rem);
-    border-left: solid 1px #e3e3e3;
-`;
-
-const editTextStyle = css`
-    border: 0;
-    box-shadow: none;
-    resize: none;
-    outline: none !important;
-    overflow-x: hidden;
-    padding: 1rem;
-    width: calc(100% - 2rem);
-    height: calc(100% - 2rem);
-    scrollbar-width: thin;
+const previewStyle = css`
+    height: 100%;
     overflow-y: auto;
-    border-bottom: solid 1px #e3e3e3;
-`;
-
-const previewColStyle = css`
-    height: 40%;
-    overflow-y: scroll;
     overflow-x: hidden;
+    padding: 1.5rem 2rem;
     box-sizing: border-box;
     scrollbar-width: thin;
-    padding: 1rem;
-`;
+    line-height: 1.8;
+`
