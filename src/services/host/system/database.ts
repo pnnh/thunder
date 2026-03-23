@@ -1,6 +1,6 @@
 import {Database} from "sqlite";
 import {encodeBase64String} from "@pnnh/atom";
-import {openMainDatabase} from "@/services/server/database/database";
+import {openMainDatabase} from "@/services/host/database/database";
 import {PSNoteModel} from "@/services/common/note";
 
 export async function bulkInsertOrUpdateNotes(notes: PSNoteModel[]) {

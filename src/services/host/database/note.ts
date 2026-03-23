@@ -1,5 +1,5 @@
 import {CodeNotFound, CodeOk, createPaginationByPage, PLGetResult, PLSelectResult} from "@pnnh/atom";
-import {openMainDatabase} from "@/services/server/database/database";
+import {openMainDatabase} from "@/services/host/database/database";
 import {PSNoteModel} from "@/services/common/note";
 
 async function findNoteFromDatabase(uid: string): Promise<PLGetResult<PSNoteModel | undefined>> {

@@ -8,8 +8,6 @@ declare global {
             getAppConfig: () => Promise<IAppConfig>
             storeNote: (note: PSNoteModel) => Promise<void>
             selectNotes: (string, string) => Promise<PLSelectResult<PSNoteModel>>
-            selectLibraries: () => Promise<PLSelectResult<PSLibraryModel>>
-            selectNotes: (noteUrn: string, queryString: string) => Promise<PLSelectResult<PSNoteModel>>
             getNote: (string) => Promise<PSNoteModel>
             openExternal: (url: string) => Promise<void>
             openFolder: () => Promise<string>

@@ -7,7 +7,6 @@ import {Link} from "react-router-dom";
 export function NotePage() {
     const [selectData, setSelectData] = useState<PLSelectData<PSNoteModel>>()
     window.serverAPI.selectNotes('aa', 'bb').then(selectResult => {
-
         if (!selectResult || selectResult.code !== 200) {
             throw new Error("host note")
         }

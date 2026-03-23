@@ -5,7 +5,6 @@ contextBridge.exposeInMainWorld('serverAPI', {
     getAppConfig: () => ipcRenderer.invoke('getAppConfig'),
     storeNote: (note: PSNoteModel) => ipcRenderer.invoke('storeNote', note),
     selectNotes: () => ipcRenderer.invoke('selectNotes'),
-    selectLibraries: () => ipcRenderer.invoke('selectLibraries'),
     getNote: () => ipcRenderer.invoke('getNote'),
     openExternal: (url: string) => ipcRenderer.invoke('openExternal', url),
     openFolder: () => ipcRenderer.invoke('openFolder'),

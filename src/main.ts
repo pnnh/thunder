@@ -1,10 +1,10 @@
 import {app, BrowserWindow, ipcMain, Menu, MenuItem} from 'electron';
 import path from 'path';
-import {serverGetAppConfig} from "@/services/server/config";
-import {IpcHandler} from "@/services/server/handler";
+import {IpcHandler} from "@/services/host/handler";
 import cron from "node-cron";
-import {runSync} from "@/services/server/worker/sync";
-import {initDatabase} from "@/services/server/worker/migration";
+import {runSync} from "@/services/host/worker/sync";
+import {initDatabase} from "@/services/host/worker/migration";
+import {hostGetAppConfig} from "@/services/host/config";
 
 if (require('electron-squirrel-startup')) {
     app.quit();
@@ -79,11 +79,10 @@ const createWindow = () => {
 
 const ipcHandler = new IpcHandler()
 app.on('ready', () => {
-    ipcMain.handle('getAppConfig', serverGetAppConfig)
-    ipcMain.handle('storeNote', ipcHandler.serverStoreNote)
-    ipcMain.handle('selectNotes', ipcHandler.serverSelectNotes)
-    ipcMain.handle('getNote', ipcHandler.serverGetNote)
-    ipcMain.handle('selectLibraries', ipcHandler.serverSelectLibraries)
+    ipcMain.handle('getAppConfig', hostGetAppConfig)
+    ipcMain.handle('storeNote', ipcHandler.hostStoreNote)
+    ipcMain.handle('selectNotes', ipcHandler.hostSelectNotes)
+    ipcMain.handle('getNote', ipcHandler.hostGetNote)
     ipcMain.handle('openExternal', ipcHandler.openExternalUrl);
     ipcMain.handle('openFolder', ipcHandler.openFolder);
 

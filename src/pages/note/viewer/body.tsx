@@ -1,9 +1,4 @@
-'use client'
-
 import React from "react";
-import {TocItem} from "@pnnh/atom";
-import {SteleBody} from "@pnnh/atom";
-import {buildNodeView} from "@pnnh/atom";
 import DOMPurify from 'isomorphic-dompurify';
 import Prism from 'prismjs';
 import {markedHighlight} from 'marked-highlight';
@@ -14,7 +9,6 @@ import 'prismjs/components/prism-markup-templating'
 import 'prismjs/components/prism-markup'
 import 'prismjs/components/prism-css'
 import 'prismjs/components/prism-java'
-import 'prismjs/components/prism-bash'
 import 'prismjs/components/prism-go'
 import 'prismjs/components/prism-c'
 import 'prismjs/components/prism-cpp'
@@ -30,8 +24,8 @@ import 'prismjs/components/prism-cmake'
 import 'prismjs/components/prism-ruby'
 import 'prismjs/components/prism-javascript'
 import 'prismjs/components/prism-typescript'
-import 'prismjs/components/prism-kotlin'
 import {Marked} from "marked"
+import {transTodo} from "@/services/locales/normal";
 
 const marked = new Marked(
     markedHighlight({
@@ -48,30 +42,17 @@ const marked = new Marked(
     })
 );
 
-export function BuildBodyHtml(props: {
-    tocList: Array<TocItem>,
+export function BuildBodyHtml({header, body}: {
     header: string,
     body: unknown,
-    libUrl: string,
-    assetsUrl: string
 }) {
-    if (!props.body) return <></>
-    let bodyObject: SteleBody | null = null
-    if (props.header === 'stele' && typeof props.body === 'string') {
-        bodyObject = JSON.parse(props.body)
-        if (!bodyObject) return <>无效文档格式</>
-        if (!bodyObject.name) bodyObject.name = 'body'
-    } else if ((props.header === 'markdown' || props.header === 'MTNote') && typeof props.body === 'string') {
-        const parsedHtml = marked.parse(props.body) as string
+    if (!body) return <></>
+    if (header === 'markdown' && typeof body === 'string') {
+        const parsedHtml = marked.parse(body) as string
         const cleanHtml = DOMPurify.sanitize(parsedHtml, {USE_PROFILES: {html: true}});
         return <div dangerouslySetInnerHTML={{__html: cleanHtml}}></div>
     }
-    if (!bodyObject) return <>无效文档格式</>
-    const children = bodyObject.children
-    if (!children || children.length < 1) return <></>
-
     return <div className={'stele-viewer'}>
-        <link rel="stylesheet" href={`${props.libUrl}/lib/assets/index.css`}/>
-        {buildNodeView(props.tocList, bodyObject, props.assetsUrl)}
+        {transTodo('无效格式')}
     </div>
 }

@@ -12,8 +12,8 @@ import {
     PLSelectResult,
     uuidV7,
 } from "@pnnh/atom";
-import {bulkInsertOrUpdateNotes} from "@/services/server/system/database";
-import {openMainDatabase} from "@/services/server/database/database";
+import {bulkInsertOrUpdateNotes} from "@/services/host/system/database";
+import {openMainDatabase} from "@/services/host/database/database";
 import {NewNoteModel, PSNoteFileModel, PSNoteMetadataModel, PSNoteModel,} from "@/services/common/note";
 import fs from "node:fs";
 import frontMatter from "front-matter";
@@ -205,16 +205,16 @@ export class SystemNoteService {
         return undefined
     }
 
-    async selectNotes(libraryUrn: string): Promise<PLSelectResult<PSNoteModel>> {
+    async selectNotes(locationUrn: string): Promise<PLSelectResult<PSNoteModel>> {
         const basePath = this.systemDomain
         const notes: PSNoteModel[] = []
-        const libraryFileName = decodeBase64String(libraryUrn)
-        if (!fs.existsSync(path.join(basePath, libraryFileName))) {
+        const locationFileName = decodeBase64String(locationUrn)
+        if (!fs.existsSync(path.join(basePath, locationFileName))) {
             return emptySelectResult()
         }
-        const files = fs.readdirSync(path.join(basePath, libraryFileName))
+        const files = fs.readdirSync(path.join(basePath, locationFileName))
         for (const file of files) {
-            const stat = fs.statSync(path.join(basePath, libraryFileName, file))
+            const stat = fs.statSync(path.join(basePath, locationFileName, file))
             if (stat.isDirectory() && file.endsWith('.note')) {
                 const noteName = path.basename(file, path.extname(file))
                 const noteUniqueName = uuidV7()//encodeMD5Format(file)

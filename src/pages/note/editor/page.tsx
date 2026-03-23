@@ -3,13 +3,13 @@ import {isSupportedLanguage} from "@pnnh/atom";
 
 import {css} from "@emotion/css";
 import {RootLayout} from "@/pages/layout/layout";
-import {MarkdownComponent} from "@/pages/markdown/markdown";
+import {MarkdownComponent} from "./markdown";
 import {useParams} from "react-router";
 import {defaultLanguage, getTargetLang} from "@/services/locales/language";
 import {NotFoundPage} from "@/pages/status/notFound";
 
 
-export function MarkdownPage() {
+export function MarkdownEditorPage() {
     let {lang} = useParams();
     if (!lang) {
         lang = getTargetLang(navigator.language, defaultLanguage)

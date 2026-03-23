@@ -1,12 +1,14 @@
-import {PSLibraryModel} from "@/services/common/library";
 import {PSNoteModel} from "@/services/common/note";
 import fs from "node:fs";
 import path from "path";
 import {CodeOk, decodeBase58String, emptySelectResult, PLSelectResult, uuidV7} from "@pnnh/atom";
-import {fillNoteMetadata} from "@/services/server/system/note";
+import {fillNoteMetadata} from "@/services/host/system/note";
 import {resolvePath} from "@pnnh/atom/nodejs";
 
-class ServerDomain {
+export class HostDomain {
+    static instance(): HostDomain {
+        return new HostDomain();
+    }
 
     getNote(): Promise<PSNoteModel> {
         const result = {
@@ -37,7 +39,7 @@ class ServerDomain {
         return Promise.resolve(result)
     }
 
-    async serverSelectNotes(bookUrn: string): Promise<PLSelectResult<PSNoteModel>> {
+    async hostSelectNotes(bookUrn: string): Promise<PLSelectResult<PSNoteModel>> {
 
         const notes: PSNoteModel[] = []
         const deBookUrn = decodeBase58String(bookUrn)
@@ -159,53 +161,9 @@ class ServerDomain {
         // return Promise.resolve(result)
     }
 
-    serverSelectLibraries(): Promise<PLSelectResult<PSLibraryModel>> {
-        const lib1: PSLibraryModel = {
-            uid: 'default',
-            name: '默认库',
-            description: '这是一个默认的个人库',
-            create_time: "",
-            update_time: "",
-            owner: "",
-            file_path: '',
-            title: '',
-            creator: '',
-            header: '',
-            image: '',
-            lang: '',
-            match: '',
-            profile: ''
-        }
-
-        if (process.platform === 'win32') {
-            console.log('当前操作系统是 Windows');
-            lib1.file_path = 'E:\\Workspace\\blog'
-        } else {
-            console.log('当前操作系统是其他平台');
-            lib1.file_path = '/home/user/workspace/blog'
-        }
-        const rangeList: PSLibraryModel[] = [lib1]
-        const result: PLSelectResult<PSLibraryModel> = {
-            code: CodeOk,
-            message: 'success',
-            data: {
-                count: rangeList.length,
-                range: rangeList,
-                page: 1,
-                size: rangeList.length
-            }
-        }
-        return Promise.resolve(result)
-    }
-
-    serverStoreNote(note: PSNoteModel): Promise<void> {
-        console.debug('serverStoreNote', note)
+    hostStoreNote(note: PSNoteModel): Promise<void> {
+        console.debug('hostStoreNote', note)
         return Promise.resolve()
     }
 }
 
-export async function serverSigninDomain(): Promise<ServerDomain> {
-    // const domain = await trySigninDomain(serverConfig.WORKER_URL)
-
-    return new ServerDomain()
-}

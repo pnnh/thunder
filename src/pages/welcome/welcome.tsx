@@ -4,7 +4,6 @@ import {css} from "@emotion/css";
 import Button from "@mui/material/Button";
 import {stringToBase58} from "@pnnh/atom";
 import {RootLayout} from "@/pages/layout/layout";
-import {Link} from "react-router-dom";
 
 const styleWelcome = css`
     width: 640px;
@@ -40,8 +39,7 @@ export function OpenToolbar() {
                     return
                 }
                 const dirParam = stringToBase58(dir, 'base58')
-                const targetUrl = `/host/storage/files?dir=${dirParam}`
-                window.location.href = targetUrl
+                window.location.href = `/note?loc=${dirParam}`
             })
         }}>打开本地目录</Button>
     </div>
@@ -52,7 +50,6 @@ export function WelcomePage() {
         <div className={styleWelcome}>
             <h1>欢迎使用</h1>
             <OpenToolbar/>
-            <Link to="/note">笔记本页面</Link>
         </div>
     </RootLayout>
 }

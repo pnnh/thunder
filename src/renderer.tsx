@@ -6,7 +6,8 @@ import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 import {Provider} from "jotai";
 import {WelcomePage} from "@/pages/welcome/welcome";
 import {NotePage} from "@/pages/note/page";
-import {MarkdownPage} from "@/pages/markdown/page";
+import {ViewPage} from "@/pages/note/viewer/viewer";
+import {MarkdownEditorPage} from "@/pages/note/editor/page";
 
 const router = createBrowserRouter([
     {
@@ -18,8 +19,12 @@ const router = createBrowserRouter([
         element: <NotePage/>,
     },
     {
-        path: "/markdown",
-        element: <MarkdownPage/>,
+        path: "/note/view",
+        element: <ViewPage/>,
+    },
+    {
+        path: "/note/editor",
+        element: <MarkdownEditorPage/>,
     }
 ]);
 

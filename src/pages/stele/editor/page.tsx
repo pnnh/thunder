@@ -5,7 +5,7 @@ import {NotFoundPage} from "@/pages/status/notFound";
 import React from "react";
 import {RootLayout} from "@/pages/layout/layout";
 import {css} from "@emotion/css";
-import {EditorComponent} from "@/pages/editor/editor";
+import {EditorComponent} from "./editor";
 
 const pageStyles = {
     editorPage: css`

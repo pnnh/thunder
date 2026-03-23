@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3'
 import {Database, open} from 'sqlite'
-import {serverGetAppConfig} from "@/services/server/config";
 import {ensureDirectoryExistence} from "@pnnh/atom/nodejs";
+import {hostGetAppConfig} from "@/services/host/config";
 
 const databaseMap: Map<string, Database<sqlite3.Database>> = new Map()
 
@@ -18,8 +18,8 @@ export async function openDatabase(filename: string): Promise<Database<sqlite3.D
 }
 
 export async function openMainDatabase() {
-    const serverConfig =  await serverGetAppConfig()
-    const cachePath = `${serverConfig.DATA_PATH}/cache`
+    const hostConfig = await hostGetAppConfig()
+    const cachePath = `${hostConfig.DATA_PATH}/cache`
     ensureDirectoryExistence(cachePath)
     const mainDatabasePath = `${cachePath}/polaris.db`
     return openDatabase(mainDatabasePath)

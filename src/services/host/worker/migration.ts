@@ -1,4 +1,4 @@
-import {openMainDatabase} from "@/services/server/database/database";
+import {openMainDatabase} from "@/services/host/database/database";
 
 export async function initDatabase() {
     const database = await openMainDatabase()

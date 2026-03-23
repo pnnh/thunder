@@ -1,32 +1,27 @@
-import {serverSigninDomain} from "@/services/server/domain";
+import {HostDomain} from './domain'
 import {dialog, shell} from 'electron';
 import {PSNoteModel} from "@/services/common/note";
 
 export class IpcHandler {
 
-    async serverStoreNote(event: Electron.Event, note: PSNoteModel) {
-        console.log('serverStoreNote', note)
-        const domain = await serverSigninDomain()
-        await domain.serverStoreNote(note)
-        return 'serverStoreNote'
+    async hostStoreNote(event: Electron.Event, note: PSNoteModel) {
+        console.log('hostStoreNote', note)
+        const domain = HostDomain.instance()
+        await domain.hostStoreNote(note)
+        return 'hostStoreNote'
     }
 
-    async serverGetNote(event: Electron.Event) {
+    async hostGetNote(event: Electron.Event) {
 
-        const domain = await serverSigninDomain()
+        const domain = HostDomain.instance()
         return await domain.getNote()
     }
 
-    async serverSelectLibraries(event: Electron.Event) {
-        console.log('serverSelectLibraries')
-        const domain = await serverSigninDomain()
-        return await domain.serverSelectLibraries()
-    }
 
-    async serverSelectNotes(event: Electron.Event, bookUrn: string) {
-        console.log('serverSelectNotes')
-        const domain = await serverSigninDomain()
-        return await domain.serverSelectNotes(bookUrn)
+    async hostSelectNotes(event: Electron.Event, bookUrn: string) {
+        console.log('hostSelectNotes')
+        const domain = HostDomain.instance()
+        return await domain.hostSelectNotes(bookUrn)
     }
 
     async openExternalUrl(event: Electron.Event, url: string) {

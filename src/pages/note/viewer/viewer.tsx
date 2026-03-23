@@ -3,12 +3,12 @@
 import React from 'react'
 import {useAtom} from "jotai";
 import {css} from '@emotion/css';
-import {storeNoteToDatabase} from "@/services/client/personal/notes";
+import {storeNoteToDatabase} from "@/services/client/notes";
 import {noteAtom} from "@/pages/note/note";
-import {NoteContainer} from "@/pages/note/partials/note";
 import {PSNoteModel} from "@/services/common/note";
+import {BuildBodyHtml} from "./body";
 
-export function NoteEditorArea() {
+export function ViewPage() {
     const [selectedNote, setSelectedNote] = useAtom(noteAtom)
     if (!selectedNote || !selectedNote.current || !selectedNote.current.body) {
         return <div>Loading</div>
@@ -43,7 +43,7 @@ export function NoteEditorArea() {
             }}></textarea>
         </div>
         <div className={previewColStyle}>
-            <NoteContainer tocList={[]} header={note.header} body={note.body} assetsUrl={'xxx'}/>
+            <BuildBodyHtml header={note.header} body={note.body}/>
         </div>
     </div>
 }

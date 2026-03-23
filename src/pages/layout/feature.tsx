@@ -1,31 +1,31 @@
 import React from 'react'
 import {css} from '@emotion/css';
-import {generateUuidV7} from "@pnnh/atom";
 import {AccountModel} from "@/services/models/account";
-import {checkLoginStatus} from "@/services/client/account/account";
+
+// import {checkLoginStatus} from "@/services/client/account/account";
 
 export function ConsoleFeature() {
     const [accountModel, setAccountModel] = React.useState<AccountModel | null>(null)
     const openSigninLink = async () => {
         const appConfig = await window.serverAPI.getAppConfig()
-        const linkId = generateUuidV7()
-        const loginLink = `${appConfig.PUBLIC_POLARIS_URL}/en/account/signin?app=thunder&link=${linkId}`
-        await window.serverAPI.openExternal(loginLink)
-        let retryTimes = 0
-        const inter = setInterval(async () => {
-            retryTimes += 1
-            console.debug('Checking login status, attempt:', retryTimes)
-            if (retryTimes > 180) {
-                clearInterval(inter)
-                return
-            }
-
-            const model = await checkLoginStatus(linkId)
-            if (model) {
-                clearInterval(inter)
-                setAccountModel(model)
-            }
-        }, 1000)
+        // const linkId = generateUuidV7()
+        // const loginLink = `${appConfig.PUBLIC_POLARIS_URL}/en/account/signin?app=thunder&link=${linkId}`
+        // await window.serverAPI.openExternal(loginLink)
+        // let retryTimes = 0
+        // const inter = setInterval(async () => {
+        //     retryTimes += 1
+        //     console.debug('Checking login status, attempt:', retryTimes)
+        //     if (retryTimes > 180) {
+        //         clearInterval(inter)
+        //         return
+        //     }
+        //
+        //     const model = await checkLoginStatus(linkId)
+        //     if (model) {
+        //         clearInterval(inter)
+        //         setAccountModel(model)
+        //     }
+        // }, 1000)
     }
     let userImageUrl = "/data/photos/3.webp"
     if (accountModel) {
